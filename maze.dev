@@ -4,7 +4,7 @@ Name=maze
 Type=0
 Ver=2
 ObjFiles=
-Includes=./libgraphics;./simpleGUI;./somecode
+Includes=./libgraphics;./simpleGUI;./somecode;D:\zju\C\м╪пн©Б\libgraphics
 Libs=
 PrivateResource=
 ResourceIncludes=
@@ -28,7 +28,7 @@ Folders=lib
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=1
-CompilerSettings=1000000000000000001000000
+CompilerSettings=0000000000000000001000000
 UnitCount=28
 
 [VersionInfo]

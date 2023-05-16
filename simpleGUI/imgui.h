@@ -183,7 +183,7 @@ void setButtonColors (char *frame, char*label, char *hotFrame, char *hotLabel, i
 void setMenuColors   (char *frame, char*label, char *hotFrame, char *hotLabel, int fillflag);
 void setTextBoxColors(char *frame, char*label, char *hotFrame, char *hotLabel, int fillflag);
 
-// 使用预定义的颜色组合
+/*// 使用预定义的颜色组合*/
 void usePredefinedColors(int k);
 void usePredefinedButtonColors(int k);
 void usePredefinedMenuColors(int k);

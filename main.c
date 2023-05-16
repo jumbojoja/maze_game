@@ -14,9 +14,9 @@
 #include <ole2.h>
 #include <ocidl.h>
 #include <winuser.h>
+#include <math.h>
 
 #include "imgui.h"
-//#include "drawmaze.h"
 
 #define msize 10
 
@@ -24,6 +24,7 @@
 static double winwidth, winheight;   // 窗口尺寸
 static int    enable_rotation = 1;   // 允许旋转
 static int    show_more_buttons = 0; // 显示更多按钮
+static int ccx = 0, ccy = 0;//玩家位置
 
 int maze[msize][msize] = {0,0,0,1,1,1,0,0,0,0,
 						  1,1,0,0,0,1,0,0,0,0,
@@ -35,18 +36,74 @@ int maze[msize][msize] = {0,0,0,1,1,1,0,0,0,0,
 				          0,0,0,1,1,1,1,1,1,1,
 					      0,1,0,0,0,1,0,0,0,0,
 					      0,1,1,1,0,0,0,0,0,0}; 
+	
 
+ 
 // 清屏函数，provided in libgraphics
 void DisplayClear(void); 
 
 // 用户的显示函数
 void display(void); 
 
+//画中心圆 
+void DrawCenteredCircle(double x, double y, double r);/*画中心圆*/
+
+
+
 // 用户的键盘事件响应函数
 void KeyboardEventProcess(int key, int event)
 {
-	uiGetKeyboard(key,event); // GUI获取键盘
-	display(); // 刷新显示
+	double length = 0.5;
+	double x = 0; //fH/8;
+	double y = winheight;
+	x = winwidth/15 + 0.3;
+	y = winheight/8*7 - 0.2;
+	//uiGetKeyboard(key,event); // GUI获取键盘
+	display();
+	switch(event)
+	{
+		case KEY_DOWN:
+			switch(key)
+			{
+				case VK_UP:     
+                	if(maze[ccx-1][ccy] == 0)
+					{
+						maze[ccx][ccy] = 0;
+						ccx -=1;
+						maze[ccx][ccy] = 2;
+					}
+                     break;
+			     case VK_DOWN:
+			         if(maze[ccx+1][ccy] == 0)  
+                	{
+                		maze[ccx][ccy] = 0;
+                		ccx += 1;
+						maze[ccx][ccy] = 2;
+					}
+                     break;
+			     case VK_LEFT:
+			         if(maze[ccx][ccy-1] == 0)  
+                	{
+                		maze[ccx][ccy] = 0;
+                		ccy -= 1;
+						maze[ccx][ccy] = 2;
+					}
+                     break;
+			     case VK_RIGHT:
+			         if(maze[ccx][ccy+1] == 0)  
+                	{
+                		maze[ccx][ccy] = 0;
+                		ccy += 1;
+						maze[ccx][ccy] = 2;
+					}
+                     break;
+                default: break;
+			}
+			break;
+		case KEY_UP:
+			 break;
+	}
+	 // 刷新显示
 }
 
 // 用户的鼠标事件响应函数
@@ -74,11 +131,11 @@ void Main()
 	// 注册时间响应函数
 	registerKeyboardEvent(KeyboardEventProcess);// 键盘
 	registerMouseEvent(MouseEventProcess);      // 鼠标
+
+	
+	SetPenColor("Red"); 
+    SetPenSize(1);
     
-
-	// 打开控制台，方便输出变量信息，便于调试
-	// InitConsole() 
-
 }
 
 //绘制迷宫
@@ -87,22 +144,30 @@ void drawmaze(int maze[msize][msize], int x, int y) {
 	double length = 0.5;
 	for (i = 0; i < msize; i++) {
 		for (j = 0; j < msize; j++) {
-			if (maze[i][j] == 0) {
+			if (maze[i][j] == 0 && abs(i-ccx) <= 3 && abs(j-ccy)<=3) {
 				MovePen(x + length*j,y - length*i);
 				DrawLine(length,0);
 				DrawLine(0,-1.0*length);
 				DrawLine(-1.0*length,0);
 				DrawLine(0,length);
-			} else if (maze[i][j] == 1) {
+			} else if (maze[i][j] == 1 && abs(i-ccx) <= 3 && abs(j-ccy)<=3) {
 				MovePen(x + length*j,y - length*i);
 				StartFilledRegion(1); 
 					DrawLine(length,0);
 					DrawLine(0,-1.0*length);
 					DrawLine(-1.0*length,0);
 					DrawLine(0,length);
-				EndFilledRegion(); 
+				EndFilledRegion(); 	
+			}else if(maze[i][j] == 2){
+				MovePen(x + length*j,y - length*i);
+				StartFilledRegion(1); 
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+				EndFilledRegion(); 	
 			}
-		}
+		}	
 	}
 } 
 
@@ -121,7 +186,8 @@ void drawMenu()
 		"Show More  | Ctrl-M",
 		"About"};
 	static char * selectedLabel = NULL;
-
+	static int iff = 1;
+	 
 	double fH = GetFontHeight(); //字体高度？ 
 	double x = 0; //fH/8;
 	double y = winheight;
@@ -132,10 +198,15 @@ void drawMenu()
 	int    selection;
 	
 	// File 菜单
-	selection = menuList(GenUIID(0), x, y-h, w, wlist, h, menuListFile, sizeof(menuListFile)/sizeof(menuListFile[0]));
-	if( selection>0 ) selectedLabel = menuListFile[selection];
-	if( selection==3 )
-		exit(-1); // choose to exit
+	if (iff == 1) {
+		selection = menuList(GenUIID(0), x, y-h, w, wlist, h, menuListFile, sizeof(menuListFile)/sizeof(menuListFile[0]));
+		if( selection>0 ) selectedLabel = menuListFile[selection];
+		if( selection==3 ){
+			DisplayClear(); 
+			iff = 0;
+		}
+			
+	}
 	
 	// Tool 菜单
 	menuListTool[3] = enable_rotation ? "Stop Rotation | Ctrl-T" : "Start Rotation | Ctrl-T";
@@ -155,6 +226,7 @@ void drawMenu()
 	y = winheight/8*7;
 	
 	//绘制迷宫 
+	
 	drawmaze(maze,x+w,y);
 	
 }
@@ -167,3 +239,12 @@ void display()
 	// 绘制和处理菜单
 	drawMenu();
 }
+
+
+void DrawCenteredCircle(double x, double y, double r)
+{
+    MovePen(x + r, y);
+    DrawArc(r, 0.0, 360.0);
+}
+
+
