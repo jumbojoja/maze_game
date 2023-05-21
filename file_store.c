@@ -19,7 +19,7 @@
 #include "imgui.h"
 //必要头文件包含
 
-#define msize 15
+#define msize 20
 
 extern bool IsEditManually;
 extern int maze[msize][msize];

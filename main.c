@@ -14,32 +14,44 @@
 #include <ole2.h>
 #include <ocidl.h>
 #include <winuser.h>
+#include <time.h>
+#include <math.h>
 
 #include "imgui.h"
 
-#define msize 15
-#define length 0.35
+#define msize 20
+#define length 0.25
+//墙和路径的标识
+#define WALL  1
+#define ROUTE 0
+//控制迷宫的复杂度，数值越大复杂度越低，最小值为0
+static int Rank = 1;
 
 static double winwidth, winheight;   // 窗口尺寸
 bool IsEditManually = FALSE;
 
 static double startx,starty;
 
-int maze[msize][msize] = {0,0,0,1,1,1,0,0,0,0,0,1,1,0,0,
-						  1,1,0,0,0,1,0,0,0,0,1,1,0,0,0,
-						  0,1,0,0,0,1,1,1,0,0,0,0,0,0,0,
-					      0,1,0,1,0,1,0,1,1,1,1,1,1,0,0,
-				 	      0,0,0,1,0,0,0,1,0,0,1,0,0,1,1,
-					      1,1,1,1,0,1,1,1,0,0,1,0,0,1,0,
-					      0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,
-				          0,0,0,1,1,1,1,0,1,1,0,0,1,0,0,
-					      0,1,0,0,0,1,0,0,0,1,0,0,1,0,1,
-					      0,1,1,1,0,1,0,0,0,1,0,1,1,1,1,
-						  0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,
-						  1,1,1,1,1,0,0,0,1,0,0,0,1,1,1,
-						  1,0,0,0,1,1,1,0,0,0,1,1,1,0,0,
-						  1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,
-						  0,0,0,0,1,1,1,1,1,0,0,0,0,1,1}; 
+int maze[msize][msize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
+						  -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,-1,
+						  -1, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1,-1,
+					      -1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1,-1,
+				 	      -1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1,-1,
+					      -1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1,-1,
+					      -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1,-1,
+				          -1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 1,-1,
+					      -1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1,-1,
+					      -1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1,-1,
+						  -1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 1,-1,
+						  -1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 1,-1,
+						  -1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1,-1,
+						  -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1,-1,
+						  -1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1,-1,
+						  -1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,-1,
+						  -1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1,-1,
+						  -1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3,-1,
+						  -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,-1,
+						  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; 
 
 // 清屏函数，provided in libgraphics
 void DisplayClear(void); 
@@ -187,7 +199,18 @@ void drawmaze(int maze[msize][msize], int x, int y)
 				DrawLine(0,length);
 				EndFilledRegion();
 				SetPenColor("Red");
+			}else if (maze[i][j] == -1) {
+				MovePen(x + length*j,y - length*i);
+				StartFilledRegion(1); 
+				SetPenColor("Gray");
+				DrawLine(length,0);
+				DrawLine(0,-1.0*length);
+				DrawLine(-1.0*length,0);
+				DrawLine(0,length);
+				EndFilledRegion();
+				SetPenColor("Red");
 			}
+			
 		}
 	}
 }
@@ -277,10 +300,19 @@ void drawMenu()
 						maze[i][j]=0;
 					}
 				}
+				for (i = 0; i < msize; i++){
+					maze[i][0] = -1;
+					maze[0][i] = -1;
+					maze[i][msize - 1] = -1;
+					maze[msize - 1][i] = -1;
+				}
 			}
 		}
 		if( selection==4 ){
 			StoreMaze();
+		}
+		if( selection==2){
+			mazehelper(maze,2,2);
 		}
 	}
 	
@@ -344,4 +376,105 @@ void display()
 bool inBox(double x, double y, double x1, double x2, double y1, double y2)
 {
 	return (x >= x1 && x <= x2 && y >= y1 && y <= y2);
+}
+
+//迷宫生成 
+void CreateMaze(int maze[msize][msize], int x, int y) {
+	maze[x][y] = ROUTE;
+ 	int i, j, k;
+	//确保四个方向随机
+	int direction[4][2] = { { 1,0 },{ -1,0 },{ 0,1 },{ 0,-1 } };
+	for (i = 0; i < 4; i++) {
+		int r = rand() % 4;
+		int temp = direction[0][0];
+		direction[0][0] = direction[r][0];
+		direction[r][0] = temp;
+ 
+		temp = direction[0][1];
+		direction[0][1] = direction[r][1];
+		direction[r][1] = temp;
+	}
+ 
+	//向四个方向开挖
+	for (i = 0; i < 4; i++) {
+		int dx = x;
+		int dy = y;
+ 
+		//控制挖的距离，由Rank来调整大小
+		int range = 1 + (Rank == 0 ? 0 : rand() % Rank);
+		while (range>0) {
+			dx += direction[i][0];
+			dy += direction[i][1];
+ 
+			//排除掉回头路
+			if (maze[dx][dy] == ROUTE) {
+				break;
+			}
+ 
+			//判断是否挖穿路径
+			int count = 0;
+			for (j = dx - 1; j < dx + 2; j++) {
+				for (k = dy - 1; k < dy + 2; k++) {
+					//abs(j - dx) + abs(k - dy) == 1 确保只判断九宫格的四个特定位置
+					if (abs(j - dx) + abs(k - dy) == 1 && maze[j][k] == ROUTE) {
+						count++;
+					}
+				}
+			}
+ 
+			if (count > 1) {
+				break;
+			}
+ 
+			//确保不会挖穿时，前进
+			--range;
+			maze[dx][dy] = ROUTE;
+		}
+ 
+		//没有挖穿危险，以此为节点递归
+		if (range <= 0) {
+			CreateMaze(maze, dx, dy);
+		}
+	}
+}
+
+void mazehelper(int maze[msize][msize], int x, int y) {
+	//初始化 
+	int i, j;
+	for (i = 0; i < msize; ++i) {
+		for (j = 0; j < msize; ++j) {
+			maze[i][j] = 1;
+		}
+	} 
+    srand((unsigned)time(NULL));
+ 
+	//最外围层设为路径的原因，为了防止挖路时挖出边界，同时为了保护迷宫主体外的一圈墙体被挖穿
+	for (i = 0; i < msize; i++){
+		maze[i][0] = ROUTE;
+		maze[0][i] = ROUTE;
+		maze[i][msize - 1] = ROUTE;
+		maze[msize - 1][i] = ROUTE;
+	}
+ 
+	//创造迷宫，（2，2）为起点
+	CreateMaze(maze, 2, 2);
+	
+	//收尾工作
+	for (i = 0; i < msize; i++){
+		maze[i][0] = -1;
+		maze[0][i] = -1;
+		maze[i][msize - 1] = -1;
+		maze[msize - 1][i] = -1;
+	}
+ 
+	//画迷宫的入口和出口
+	maze[2][1] = 2;
+ 
+	//由于算法随机性，出口有一定概率不在（L-3,L-2）处，此时需要寻找出口
+	for (i = msize - 3; i >= 0; i--) {
+		if (maze[i][msize - 3] == ROUTE) {
+			maze[i][msize - 2] = 3;
+			break;
+		}
+	}
 }
