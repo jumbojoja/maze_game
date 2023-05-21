@@ -25,17 +25,19 @@ static double winwidth, winheight;   // 窗口尺寸
 static int    enable_rotation = 1;   // 允许旋转
 static int    show_more_buttons = 0; // 显示更多按钮
 static int ccx = 0, ccy = 0;//玩家位置
+static int haveKey = 0;
 
 int maze[msize][msize] = {0,0,0,1,1,1,0,0,0,0,
 						  1,1,0,0,0,1,0,0,0,0,
 						  0,1,0,0,0,1,1,1,0,0,
-					      0,1,0,1,0,1,0,1,1,1,
+					      0,1,0,1,0,1,4,1,1,1,
 				 	      0,0,0,1,0,0,0,1,0,0,
 					      1,1,1,1,0,1,1,1,0,0,
 					      0,1,0,0,0,0,0,0,0,0,
 				          0,0,0,1,1,1,1,1,1,1,
 					      0,1,0,0,0,1,0,0,0,0,
-					      0,1,1,1,0,0,0,0,0,0}; 
+					      0,1,1,1,0,5,0,0,0,3}; 
+int player[msize][msize] = {6};
 	
 
  
@@ -65,36 +67,112 @@ void KeyboardEventProcess(int key, int event)
 		case KEY_DOWN:
 			switch(key)
 			{
-				case VK_UP:     
+				case VK_UP:
+					if(ccx == 0)
+						break;     
                 	if(maze[ccx-1][ccy] == 0)
 					{
-						maze[ccx][ccy] = 0;
+						player[ccx][ccy] = 0;
 						ccx -=1;
-						maze[ccx][ccy] = 2;
+						player[ccx][ccy] = 6;
+					}
+					else if(maze[ccx-1][ccy] == 4)
+					{
+						haveKey = 1;
+						player[ccx][ccy] = 0;
+                		ccx -= 1;
+						player[ccx][ccy] = 6;	
+					}
+					else if(maze[ccx-1][ccy] == 5)
+					{
+						if(haveKey)
+						{
+							player[ccx][ccy] = 0;
+                			ccx -= 1;
+							player[ccx][ccy] = 6;	
+						}
+						
 					}
                      break;
 			     case VK_DOWN:
+			     	if(ccx == msize-1)
+			     		break;
 			         if(maze[ccx+1][ccy] == 0)  
                 	{
-                		maze[ccx][ccy] = 0;
+                		player[ccx][ccy] = 0;
                 		ccx += 1;
-						maze[ccx][ccy] = 2;
+						player[ccx][ccy] = 6;
+					}
+					else if(maze[ccx+1][ccy] == 4)
+					{
+						haveKey = 1;
+						player[ccx][ccy] = 0;
+                		ccx += 1;
+						player[ccx][ccy] = 6;	
+					}
+					else if(maze[ccx+1][ccy] == 5)
+					{
+						if(haveKey)
+						{
+							player[ccx][ccy] = 0;
+                			ccx += 1;
+							player[ccx][ccy] = 6;	
+						}
+						
 					}
                      break;
 			     case VK_LEFT:
+			     	if(ccy == 0)
+			     		break;
 			         if(maze[ccx][ccy-1] == 0)  
                 	{
-                		maze[ccx][ccy] = 0;
+                		player[ccx][ccy] = 0;
                 		ccy -= 1;
-						maze[ccx][ccy] = 2;
+						player[ccx][ccy] = 6;
+					}
+					else if(maze[ccx][ccy-1] == 4)
+					{
+						haveKey = 1;
+						player[ccx][ccy] = 0;
+                		ccy -= 1;
+						player[ccx][ccy] = 6;	
+					}
+					else if(maze[ccx][ccy-1] == 5)
+					{
+						if(haveKey)
+						{
+							player[ccx][ccy] = 0;
+                			ccy -= 1;
+							player[ccx][ccy] = 6;	
+						}
+						
 					}
                      break;
 			     case VK_RIGHT:
+			     	if(ccy == msize-1)
+			     		break;
 			         if(maze[ccx][ccy+1] == 0)  
                 	{
-                		maze[ccx][ccy] = 0;
+                		player[ccx][ccy] = 0;
                 		ccy += 1;
-						maze[ccx][ccy] = 2;
+						player[ccx][ccy] = 6;
+					}
+					else if(maze[ccx][ccy+1] == 4)
+					{
+						haveKey = 1;
+						player[ccx][ccy] = 0;
+                		ccy += 1;
+						player[ccx][ccy] = 6;	
+					}
+					else if(maze[ccx][ccy+1] == 5)
+					{
+						if(haveKey)
+						{
+							player[ccx][ccy] = 0;
+                			ccy += 1;
+							player[ccx][ccy] = 6;	
+						}
+						
 					}
                      break;
                 default: break;
@@ -144,13 +222,13 @@ void drawmaze(int maze[msize][msize], int x, int y) {
 	double length = 0.5;
 	for (i = 0; i < msize; i++) {
 		for (j = 0; j < msize; j++) {
-			if (maze[i][j] == 0 && abs(i-ccx) <= 3 && abs(j-ccy)<=3) {
+			if (maze[i][j] == 0 && abs(i-ccx) <= 2 && abs(j-ccy)<=2) {
 				MovePen(x + length*j,y - length*i);
 				DrawLine(length,0);
 				DrawLine(0,-1.0*length);
 				DrawLine(-1.0*length,0);
 				DrawLine(0,length);
-			} else if (maze[i][j] == 1 && abs(i-ccx) <= 3 && abs(j-ccy)<=3) {
+			} else if (maze[i][j] == 1 && abs(i-ccx) <= 2 && abs(j-ccy)<=2) {
 				MovePen(x + length*j,y - length*i);
 				StartFilledRegion(1); 
 					DrawLine(length,0);
@@ -158,7 +236,8 @@ void drawmaze(int maze[msize][msize], int x, int y) {
 					DrawLine(-1.0*length,0);
 					DrawLine(0,length);
 				EndFilledRegion(); 	
-			}else if(maze[i][j] == 2){
+			}
+			if(player[i][j] == 6){
 				MovePen(x + length*j,y - length*i);
 				StartFilledRegion(1); 
 					DrawLine(length,0);
