@@ -27,9 +27,15 @@ CommandLine=
 Folders=lib
 IncludeVersionInfo=0
 SupportXPThemes=0
+<<<<<<< HEAD
 CompilerSet=1
 CompilerSettings=0000000000000000001000000
 UnitCount=28
+=======
+CompilerSet=0
+CompilerSettings=0000000000000000001000000
+UnitCount=29
+>>>>>>> 095111c815419aa359f4b7d45d2bff7f0cf7c2ab
 
 [VersionInfo]
 Major=1
@@ -326,6 +332,16 @@ BuildCmd=
 FileName=somecode\drawmaze.h
 CompileCpp=0
 Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit29]
+FileName=file_store.c
+CompileCpp=0
+Folder=
 Compile=1
 Link=1
 Priority=1000

@@ -18,34 +18,50 @@
 
 #include "imgui.h"
 
-#define msize 10
+#define msize 15
+#define length 0.35
 
-// 全局变量
 static double winwidth, winheight;   // 窗口尺寸
-static int    enable_rotation = 1;   // 允许旋转
-static int    show_more_buttons = 0; // 显示更多按钮
-static int ccx = 0, ccy = 0;//玩家位置
-static int haveKey = 0;
 
-int maze[msize][msize] = {0,0,0,1,1,1,0,0,0,0,
-						  1,1,0,0,0,1,0,0,0,0,
-						  0,1,0,0,0,1,1,1,0,0,
-					      0,1,0,1,0,1,4,1,1,1,
-				 	      0,0,0,1,0,0,0,1,0,0,
-					      1,1,1,1,0,1,1,1,0,0,
-					      0,1,0,0,0,0,0,0,0,0,
-				          0,0,0,1,1,1,1,1,1,1,
-					      0,1,0,0,0,1,0,0,0,0,
-					      0,1,1,1,0,5,0,0,0,3}; 
-int player[msize][msize] = {6};
-	
+bool IsEditManually = FALSE;
+
+static double startx,starty;
+
+int maze[msize][msize] = {0,0,0,1,1,1,0,0,0,0,0,1,1,0,0,
+						  1,1,0,0,0,1,0,0,0,0,1,1,0,0,0,
+						  0,1,0,0,0,1,1,1,0,0,0,0,0,0,0,
+					      0,1,0,1,0,1,0,1,1,1,1,1,1,0,0,
+				 	      0,0,0,1,0,0,0,1,0,0,1,0,0,1,1,
+					      1,1,1,1,0,1,1,1,0,0,1,0,0,1,0,
+					      0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,
+				          0,0,0,1,1,1,1,0,1,1,0,0,1,0,0,
+					      0,1,0,0,0,1,0,0,0,1,0,0,1,0,1,
+					      0,1,1,1,0,1,0,0,0,1,0,1,1,1,1,
+						  0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,
+						  1,1,1,1,1,0,0,0,1,0,0,0,1,1,1,
+						  1,0,0,0,1,1,1,0,0,0,1,1,1,0,0,
+						  1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,
+						  0,0,0,0,1,1,1,1,1,0,0,0,0,1,1}; 
 
  
 // 清屏函数，provided in libgraphics
 void DisplayClear(void); 
 
 // 用户的显示函数
-void display(void); 
+void display(void);
+
+// 画空迷宫函数 
+//void DrawEmptyMaze(void);
+
+//用于保存Maze的函数 ，使用时直接调用即可 
+void StoreMaze(void);
+
+//像素转英寸函数 
+double ScaleXInches(int x);
+double ScaleYInches(int y);
+
+//判断鼠标是否在迷宫内函数 
+bool inBox(double x0, double y0, double x1, double x2, double y1, double y2);
 
 //画中心圆 
 void DrawCenteredCircle(double x, double y, double r);/*画中心圆*/
@@ -187,7 +203,54 @@ void KeyboardEventProcess(int key, int event)
 // 用户的鼠标事件响应函数
 void MouseEventProcess(int x, int y, int button, int event)
 {
-	uiGetMouse(x,y,button,event); //GUI获取鼠标
+	//GUI获取鼠标 	
+	if(IsEditManually == TRUE){
+		switch(event){
+			case BUTTON_DOWN:
+				switch(button){
+					case LEFT_BUTTON:{
+						if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]==0){
+						maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]=1;
+						}else if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]==1){
+						maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]=0;	
+						}
+						break;
+					}
+					case RIGHT_BUTTON:{
+						if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]==0){
+						maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]=2;
+						}else if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]==2){
+						maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]=0;	
+						}
+						break;
+					}
+					case MIDDLE_BUTTON:{
+						if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]==0){
+						maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]=3;
+						}else if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]==3){
+						maze[(int)(((int)starty-ScaleYInches(y))/length)]
+							[(int)((ScaleXInches(x)-(int)(startx))/length)]=0;	
+						}
+						break;
+					}
+					default: break;
+					//红笔是墙 蓝笔是起点 棕笔是终点 
+				}
+			
+		}
+	}
+	uiGetMouse(x,y,button,event);
 	display(); // 刷新显示
 }
 
@@ -205,7 +268,7 @@ void Main()
 	// 获得窗口尺寸
     winwidth = GetWindowWidth();
     winheight = GetWindowHeight();
-
+    
 	// 注册时间响应函数
 	registerKeyboardEvent(KeyboardEventProcess);// 键盘
 	registerMouseEvent(MouseEventProcess);      // 鼠标
@@ -216,10 +279,11 @@ void Main()
     
 }
 
-//绘制迷宫
-void drawmaze(int maze[msize][msize], int x, int y) {
+//绘制迷宫 
+void drawmaze(int maze[msize][msize], int x, int y) 
+{
 	int i, j;
-	double length = 0.5;
+	SetPenColor("Red");
 	for (i = 0; i < msize; i++) {
 		for (j = 0; j < msize; j++) {
 			if (maze[i][j] == 0 && abs(i-ccx) <= 2 && abs(j-ccy)<=2) {
@@ -236,6 +300,26 @@ void drawmaze(int maze[msize][msize], int x, int y) {
 					DrawLine(-1.0*length,0);
 					DrawLine(0,length);
 				EndFilledRegion(); 	
+			}else if (maze[i][j] == 2) {
+				MovePen(x + length*j,y - length*i);
+				StartFilledRegion(1); 
+				SetPenColor("Blue");
+				DrawLine(length,0);
+				DrawLine(0,-1.0*length);
+				DrawLine(-1.0*length,0);
+				DrawLine(0,length);
+				EndFilledRegion();
+				SetPenColor("Red");
+			}else if (maze[i][j] == 3) {
+				MovePen(x + length*j,y - length*i);
+				StartFilledRegion(1); 
+				SetPenColor("Brown");
+				DrawLine(length,0);
+				DrawLine(0,-1.0*length);
+				DrawLine(-1.0*length,0);
+				DrawLine(0,length);
+				EndFilledRegion();
+				SetPenColor("Red");
 			}
 			if(player[i][j] == 6){
 				MovePen(x + length*j,y - length*i);
@@ -248,66 +332,129 @@ void drawmaze(int maze[msize][msize], int x, int y) {
 			}
 		}	
 	}
-} 
+}
 
-// 菜单演示程序
+// 菜单
 void drawMenu()
 { 
-	static char * menuListFile[] = {"File",  
-		"Open  | Ctrl-O", // 快捷键必须采用[Ctrl-X]格式，放在字符串的结尾
-		"Close",
+	static char * menuListPause[] = {"Pause",  
+		"Restart  | Ctrl-R", // 快捷键必须采用[Ctrl-X]格式，放在字符串的结尾
 		"Exit   | Ctrl-E"};
-	static char * menuListTool[] = {"Tool",
-		"Triangle",
-		"Circle",
-		"Stop Rotation | Ctrl-T"};
+	static char * menuListEdit[] = {"Edit",
+		"Size",
+		"Regenerate",
+		"Edit Manually | Ctrl-M"};
 	static char * menuListHelp[] = {"Help",
-		"Show More  | Ctrl-M",
-		"About"};
+		"Auto Solve  | Ctrl-A",
+		"Tips"};
+	static char * menuListSize[] = {"Set size",
+		"15*15",
+		"10*10"};
 	static char * selectedLabel = NULL;
-	static int iff = 1;
-	 
-	double fH = GetFontHeight(); //字体高度？ 
+	
+	static int ifStartbutton = 1;
+	static int ifExitbutton = 1;
+	static int ifListPause = 0;
+	static int ifListEdit = 0;
+	static int ifListHelp = 0;
+	static int ifListSize = 1; 
+	static int ifdrawmaze = 0;
+
+	double fH = GetFontHeight(); //字体高度
 	double x = 0; //fH/8;
 	double y = winheight;
 	double h = fH*1.5; // 控件高度
 	double w = TextStringWidth(menuListHelp[0])*2; // 控件宽度
-	double wlist = TextStringWidth(menuListTool[3])*1.2;
-	double xindent = winheight/20; // 缩进
+	double wlist = TextStringWidth(menuListEdit[3])*1.2;
 	int    selection;
 	
-	// File 菜单
-	if (iff == 1) {
-		selection = menuList(GenUIID(0), x, y-h, w, wlist, h, menuListFile, sizeof(menuListFile)/sizeof(menuListFile[0]));
-		if( selection>0 ) selectedLabel = menuListFile[selection];
-		if( selection==3 ){
-			DisplayClear(); 
-			iff = 0;
+
+	// 开始按钮 
+	if (ifStartbutton) {
+		if (button(GenUIID(0), winwidth/2, winheight/2, w, h, "Start")) {
+			ifStartbutton = 0;
+			ifExitbutton = 0;
+			ifListPause = 1;
+			ifListEdit = 1;
+			ifListHelp = 1;
+			ifListSize = 0;
+			ifdrawmaze = 1;
+			IsEditManually = FALSE;
 		}
-			
 	}
 	
-	// Tool 菜单
-	menuListTool[3] = enable_rotation ? "Stop Rotation | Ctrl-T" : "Start Rotation | Ctrl-T";
-	selection = menuList(GenUIID(0),x+w,  y-h, w, wlist,h, menuListTool,sizeof(menuListTool)/sizeof(menuListTool[0]));
-	if( selection>0 ) selectedLabel = menuListTool[selection];
-	if( selection==3 )
-		enable_rotation = ! enable_rotation;
+	// 退出按钮 
+	if (ifExitbutton) {
+		if (button(GenUIID(0), winwidth/2, winheight/2 - h*1.2, w, h, "Exit")) {
+			exit(-1);
+		}
+	}
+	
+	// Pause 菜单
+	if (ifListPause) {
+		selection = menuList(GenUIID(0), x, y-h, w, wlist, h, menuListPause, sizeof(menuListPause)/sizeof(menuListPause[0]));
+		if( selection>0 ) selectedLabel = menuListPause[selection];
+		if( selection==2 ) {	// 退回主菜单 
+			ifStartbutton = 1;
+			ifExitbutton = 1;
+			ifListPause = 0;
+			ifListEdit = 0;
+			ifListHelp = 0;
+			ifListSize = 1;
+			ifdrawmaze = 0;
+		}
+	}
+		
+	
+	// Edit 菜单
+	if (ifListEdit) {
+		selection = menuList(GenUIID(0),x+w,  y-h, w, wlist,h, menuListEdit,sizeof(menuListEdit)/sizeof(menuListEdit[0]));
+		if( selection>0 ) selectedLabel = menuListEdit[selection];
+		if( selection==3 ){
+			IsEditManually = TRUE;
+			if(IsEditManually){
+				ifdrawmaze = 1; 
+				int i, j;
+				for(i=0;i<msize;i++){
+					for(j=0;j<msize;j++){
+						maze[i][j]=0;
+					}
+				}
+			}
+		}
+		if( selection==4 ){
+			StoreMaze();
+		}
+	}
 	
 	// Help 菜单
-	menuListHelp[1] = show_more_buttons ? "Show Less | Ctrl-M" : "Show More | Ctrl-M";
-	selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListHelp,sizeof(menuListHelp)/sizeof(menuListHelp[0]));
-	if( selection>0 ) selectedLabel = menuListHelp[selection];
-	if( selection==1 )
-		show_more_buttons = ! show_more_buttons;
- 
-	x = winwidth/15;
-	y = winheight/8*7;
+	if (ifListHelp) {
+		selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListHelp,sizeof(menuListHelp)/sizeof(menuListHelp[0]));
+		if( selection>0 ) selectedLabel = menuListHelp[selection];
+	}
+		
+	// Size 菜单
+	if (ifListSize) {
+		selection = menuList(GenUIID(0),winwidth/2,winheight/2 - h*1.2*2, w, wlist, h, menuListSize,sizeof(menuListSize)/sizeof(menuListSize[0]));
+		if( selection>0 ) selectedLabel = menuListSize[selection];
+	}
 	
 	//绘制迷宫 
+	if (ifdrawmaze) {
+		x = winwidth/13;
+		y = winheight/12*11;
+		drawmaze(maze,x+5*w,y);
+		startx=x+5*w;
+		starty=y;
+	}
+
 	
-	drawmaze(maze,x+w,y);
-	
+	if(IsEditManually){
+		if (button(GenUIID(0), 1, winheight/2, w, h, "Save")){
+			IsEditManually=FALSE;
+			StoreMaze();
+		}
+	}//新增保存按钮 
 }
 
 void display()
@@ -319,11 +466,5 @@ void display()
 	drawMenu();
 }
 
-
-void DrawCenteredCircle(double x, double y, double r)
-{
-    MovePen(x + r, y);
-    DrawArc(r, 0.0, 360.0);
-}
 
 
