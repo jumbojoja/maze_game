@@ -54,6 +54,9 @@ int maze[msize][msize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 						  -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,-1,
 						  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; 
 
+int player[msize][msize] = {0};
+static int ccx = 2, ccy = 2;
+static haveKey = 0;
  
 // 清屏函数，provided in libgraphics
 void DisplayClear(void); 
@@ -82,7 +85,6 @@ void DrawCenteredCircle(double x, double y, double r);/*画中心圆*/
 // 用户的键盘事件响应函数
 void KeyboardEventProcess(int key, int event)
 {
-	double length = 0.5;
 	double x = 0; //fH/8;
 	double y = winheight;
 	x = winwidth/15 + 0.3;
@@ -269,6 +271,7 @@ void MouseEventProcess(int x, int y, int button, int event)
 // 仅初始化执行一次
 void Main() 
 {
+	player[ccx][ccy] = 6;
 	// 初始化窗口和图形系统
 	SetWindowTitle("Graphics User Interface Demo");
 	//SetWindowSize(10, 10); // 单位 - 英寸
@@ -324,7 +327,7 @@ void drawmaze(int maze[msize][msize], int x, int y)
 			}else if (maze[i][j] == 3) {
 				MovePen(x + length*j,y - length*i);
 				StartFilledRegion(1); 
-				SetPenColor("Brown");
+				SetPenColor("Orange");
 				DrawLine(length,0);
 				DrawLine(0,-1.0*length);
 				DrawLine(-1.0*length,0);
@@ -344,12 +347,14 @@ void drawmaze(int maze[msize][msize], int x, int y)
 			}
 			if(player[i][j] == 6){
 				MovePen(x + length*j,y - length*i);
+				SetPenColor("Black");
 				StartFilledRegion(1); 
 					DrawLine(length,0);
 					DrawLine(0,-1.0*length);
 					DrawLine(-1.0*length,0);
 					DrawLine(0,length);
 				EndFilledRegion(); 	
+				SetPenColor("Red");
 			}
 		}
 	}
