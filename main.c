@@ -534,9 +534,6 @@ void drawMenu()
 				}
 			}
 		}
-		if( selection==4 ){
-			StoreMaze();
-		}
 		if( selection==2){
 			mazehelper(maze,2,2);
 		}
