@@ -84,7 +84,7 @@ void KeyboardEventProcess(int key, int event)
 	double y = winheight;
 	x = winwidth/15 + 0.3;
 	y = winheight/8*7 - 0.2;
-	//uiGetKeyboard(key,event); // GUI获取键盘
+	uiGetKeyboard(key,event); // GUI获取键盘
 	display();
 	switch(event)
 	{
@@ -453,7 +453,6 @@ void drawMenu()
 	double w = TextStringWidth(menuListHelp[0])*2; // 控件宽度
 	double wlist = TextStringWidth(menuListEdit[3])*1.2;
 	int    selection;
-	int    i; 
 	
 
 	// 开始按钮 
