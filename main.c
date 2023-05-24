@@ -385,7 +385,8 @@ void drawMenu()
 	static int ifListHelp = 0;
 	static int ifListSize = 1; 
 	static int ifdrawmaze = 0;
-
+	static int ifLogo = 1;
+	
 	double fH = GetFontHeight(); //字体高度
 	double x = 0; //fH/8;
 	double y = winheight;
@@ -406,8 +407,24 @@ void drawMenu()
 			ifListSize = 0;
 			ifdrawmaze = 1;
 			IsEditManually = FALSE;
+			ifLogo = 0;
 		}
 	}
+	
+	//画logo
+	if (ifLogo) {
+		SetPenColor("Orange");
+		MovePen(winwidth/2-w*3.5, winheight/2+h*7);
+		DrawTextString(" .ooooo.      ooo.    .oo.    .oo.          .oooo.          oooooooo    .ooooo.    ");
+		MovePen(winwidth/2-w*3.5, winheight/2+h*7-fH);
+		DrawTextString("d88'  `'Y8    `888P'Y88bP'Y88b    `P    )88b      d'''7d8P      d88'  `88b  ");
+		MovePen(winwidth/2-w*3.5, winheight/2+h*7-2*fH);
+		DrawTextString("888               888      888      888      .oP'888          .d8P'      888ooo888  ");
+		MovePen(winwidth/2-w*3.5, winheight/2+h*7-3*fH);
+		DrawTextString("888      .o8    888      888      888    d8(   888      .d8P'    .P  888        .o ");
+		MovePen(winwidth/2-w*3.5, winheight/2+h*7-4*fH);
+		DrawTextString("`Y8bod8P'  o888o  o888o  o888o  `Y888""8o  d8888888P    `Y8bod8P'  ");
+	} 
 	
 	// 退出按钮 
 	if (ifExitbutton) {
@@ -428,6 +445,7 @@ void drawMenu()
 			ifListHelp = 0;
 			ifListSize = 1;
 			ifdrawmaze = 0;
+			ifLogo = 1;
 		}
 	}
 		
