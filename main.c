@@ -564,6 +564,7 @@ void drawMenu()
 		if (button(GenUIID(0), 3, winheight/13, w, h, "Save")){
 			IsEditManually = FALSE;
 			StoreMaze();
+			int i; 
 			for(i=0;i<30;i++){
 				MazeName[i] = '\0';
 			}
