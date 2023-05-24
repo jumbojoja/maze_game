@@ -22,12 +22,14 @@
 #define msize 20
 
 extern bool IsEditManually;
+
 extern int maze[msize][msize];
+
+extern char MazeName[30];
 
 struct EdittedMaze{
 	int number;
-	bool sight;//这一变量用于表示是否开启视野遮挡 
-	char name[20];
+	char name[30];
 	int Maze[msize][msize];
 	struct EdittedMaze *next; 
 };//链表结点 结构定义 
@@ -39,7 +41,7 @@ void StoreMaze();
 struct EdittedMaze *LoadMazeList();
 
 //用于删除结点的函数。还未实现 
-void DeleteMaze(); 
+void DeleteMaze();
 
 void StoreMaze()
 {
@@ -51,6 +53,12 @@ void StoreMaze()
 		}
 		
 		fprintf(fp,"\n");
+		
+		for(i=0;MazeName[i]!='\0';i++){
+			fprintf(fp,"%c",MazeName[i]);
+		}
+		fprintf(fp,"\n");
+		
 		for(i=0;i<msize;i++){
 			for(j=0;j<msize;j++){
 				fprintf(fp,"%d ",maze[i][j]);
