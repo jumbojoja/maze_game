@@ -18,6 +18,7 @@
 #include <math.h>
 
 #include "imgui.h"
+#include "file_store.h"
 
 #define msize 20
 #define length 0.25
@@ -29,9 +30,14 @@ static int Rank = 1;
 
 static double winwidth, winheight;   // 窗口尺寸
 
+//手动编辑判断变量 如果开启表示正在手动编辑 
 bool IsEditManually = FALSE;
 
+//迷宫开始画的坐标，可供调用 
 static double startx,starty;
+
+//编辑迷宫的名字 所用字符串
+char MazeName[30];
 
 int maze[msize][msize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 						  -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,-1,
@@ -59,16 +65,10 @@ static int ccx = 2, ccy = 2;
 static haveKey = 0;
  
 // 清屏函数，provided in libgraphics
-void DisplayClear(void); 
+void DisplayClear(void);
 
 // 用户的显示函数
 void display(void);
-
-// 画空迷宫函数 
-//void DrawEmptyMaze(void);
-
-//用于保存Maze的函数 ，使用时直接调用即可 
-void StoreMaze(void);
 
 //像素转英寸函数 
 double ScaleXInches(int x);
@@ -76,11 +76,6 @@ double ScaleYInches(int y);
 
 //判断鼠标是否在迷宫内函数 
 bool inBox(double x0, double y0, double x1, double x2, double y1, double y2);
-
-//画中心圆 
-void DrawCenteredCircle(double x, double y, double r);/*画中心圆*/
-
-
 
 // 用户的键盘事件响应函数
 void KeyboardEventProcess(int key, int event)
@@ -216,7 +211,8 @@ void KeyboardEventProcess(int key, int event)
 // 用户的鼠标事件响应函数
 void MouseEventProcess(int x, int y, int button, int event)
 {
-	//GUI获取鼠标 	
+	//GUI获取鼠标 
+	uiGetMouse(x,y,button,event);
 	if(IsEditManually == TRUE){
 		switch(event){
 			case BUTTON_DOWN:
@@ -263,17 +259,21 @@ void MouseEventProcess(int x, int y, int button, int event)
 			
 		}
 	}
-	uiGetMouse(x,y,button,event);
 	display(); // 刷新显示
+}
+
+void CharEventProcess(char ch)
+{
+	uiGetChar(ch); // GUI字符输入
+	display(); //刷新显示
 }
 
 // 用户主程序入口
 // 仅初始化执行一次
 void Main() 
 {
-	player[ccx][ccy] = 6;
 	// 初始化窗口和图形系统
-	SetWindowTitle("Graphics User Interface Demo");
+	SetWindowTitle("EXPLORATION IN THE HAZE!");
 	//SetWindowSize(10, 10); // 单位 - 英寸
 	//SetWindowSize(20, 10);
 	//SetWindowSize(10, 20);  // 如果屏幕尺寸不够，则按比例缩小
@@ -286,7 +286,7 @@ void Main()
 	// 注册时间响应函数
 	registerKeyboardEvent(KeyboardEventProcess);// 键盘
 	registerMouseEvent(MouseEventProcess);      // 鼠标
-
+	registerCharEvent(CharEventProcess);
 	
 	SetPenColor("Red"); 
     SetPenSize(1);
@@ -300,61 +300,120 @@ void drawmaze(int maze[msize][msize], int x, int y)
 	SetPenColor("Red");
 	for (i = 0; i < msize; i++) {
 		for (j = 0; j < msize; j++) {
-			if (maze[i][j] == 0 && abs(i-ccx) <= 2 && abs(j-ccy)<=2) {
-				MovePen(x + length*j,y - length*i);
-				DrawLine(length,0);
-				DrawLine(0,-1.0*length);
-				DrawLine(-1.0*length,0);
-				DrawLine(0,length);
-			} else if (maze[i][j] == 1 && abs(i-ccx) <= 2 && abs(j-ccy)<=2) {
-				MovePen(x + length*j,y - length*i);
-				StartFilledRegion(1); 
+			if( IsEditManually ){/*现在有两种画迷宫，这是编辑的时候的画迷宫，没有视野判断*/ 
+				if (maze[i][j] == 0 ) {
+					MovePen(x + length*j,y - length*i);
 					DrawLine(length,0);
 					DrawLine(0,-1.0*length);
 					DrawLine(-1.0*length,0);
 					DrawLine(0,length);
-				EndFilledRegion(); 	
-			}else if (maze[i][j] == 2) {
-				MovePen(x + length*j,y - length*i);
-				StartFilledRegion(1); 
-				SetPenColor("Blue");
-				DrawLine(length,0);
-				DrawLine(0,-1.0*length);
-				DrawLine(-1.0*length,0);
-				DrawLine(0,length);
-				EndFilledRegion();
-				SetPenColor("Red");
-			}else if (maze[i][j] == 3) {
-				MovePen(x + length*j,y - length*i);
-				StartFilledRegion(1); 
-				SetPenColor("Orange");
-				DrawLine(length,0);
-				DrawLine(0,-1.0*length);
-				DrawLine(-1.0*length,0);
-				DrawLine(0,length);
-				EndFilledRegion();
-				SetPenColor("Red");
-			}else if (maze[i][j] == -1) {
-				MovePen(x + length*j,y - length*i);
-				StartFilledRegion(1); 
-				SetPenColor("Gray");
-				DrawLine(length,0);
-				DrawLine(0,-1.0*length);
-				DrawLine(-1.0*length,0);
-				DrawLine(0,length);
-				EndFilledRegion();
-				SetPenColor("Red");
-			}
-			if(player[i][j] == 6){
-				MovePen(x + length*j,y - length*i);
-				SetPenColor("Black");
-				StartFilledRegion(1); 
+				} else if (maze[i][j] == 1 ) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
 					DrawLine(length,0);
 					DrawLine(0,-1.0*length);
 					DrawLine(-1.0*length,0);
 					DrawLine(0,length);
-				EndFilledRegion(); 	
-				SetPenColor("Red");
+					EndFilledRegion(); 	
+				}else if (maze[i][j] == 2) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					SetPenColor("Blue");
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion();
+					SetPenColor("Red");
+				}else if (maze[i][j] == 3) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					SetPenColor("Orange");
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion();
+					SetPenColor("Red");
+				}else if (maze[i][j] == -1) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					SetPenColor("Gray");
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion();
+					SetPenColor("Red");
+				}
+				if(player[i][j] == 6){
+					MovePen(x + length*j,y - length*i);
+					SetPenColor("Black");
+					StartFilledRegion(1); 
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion(); 	
+					SetPenColor("Red");
+				}
+			}else{
+				if (maze[i][j] == 0 && abs(i-ccx) <= 1 && abs(j-ccy)<=1 ) {
+					MovePen(x + length*j,y - length*i);
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+				} else if (maze[i][j] == 1 && abs(i-ccx) <= 1 && abs(j-ccy)<=1 ) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion(); 	
+				}else if (maze[i][j] == 2) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					SetPenColor("Blue");
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion();
+					SetPenColor("Red");
+				}else if (maze[i][j] == 3) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					SetPenColor("Orange");
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion();
+					SetPenColor("Red");
+				}else if (maze[i][j] == -1) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					SetPenColor("Gray");
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion();
+					SetPenColor("Red");
+				}
+				if(player[i][j] == 6){
+					MovePen(x + length*j,y - length*i);
+					SetPenColor("Black");
+					StartFilledRegion(1); 
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion(); 	
+					SetPenColor("Red");
+				}
 			}
 		}
 	}
@@ -393,6 +452,7 @@ void drawMenu()
 	double w = TextStringWidth(menuListHelp[0])*2; // 控件宽度
 	double wlist = TextStringWidth(menuListEdit[3])*1.2;
 	int    selection;
+	int    i; 
 	
 
 	// 开始按钮 
@@ -406,6 +466,8 @@ void drawMenu()
 			ifListSize = 0;
 			ifdrawmaze = 1;
 			IsEditManually = FALSE;
+			
+			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
 		}
 	}
 	
@@ -438,6 +500,7 @@ void drawMenu()
 		if( selection>0 ) selectedLabel = menuListEdit[selection];
 		if( selection==3 ){
 			IsEditManually = TRUE;
+			player[ccx][ccy] = 0;
 			if(IsEditManually){
 				ifdrawmaze = 1; 
 				int i, j;
@@ -485,11 +548,22 @@ void drawMenu()
 
 	
 	if(IsEditManually){
-		if (button(GenUIID(0), 1, winheight/2, w, h, "Save")){
-			IsEditManually=FALSE;
+		if (button(GenUIID(0), 3, winheight/13, w, h, "Save")){
+			IsEditManually = FALSE;
 			StoreMaze();
-		}
-	}//新增保存按钮 
+			for(i=0;i<30;i++){
+				MazeName[i] = '\0';
+			}
+		}//保存后清零名称数组 
+	}
+	//新增保存按钮 
+	
+	if(IsEditManually){
+		SetPenColor("Brown"); 
+		drawLabel(5, winheight/13, "迷宫名称");
+		if( textbox(GenUIID(0), 5+TextStringWidth("迷宫名称"), winheight/13, 3*w, h, MazeName, sizeof(MazeName)) )
+		;
+	}//新增迷宫名称文本框 
 }
 
 void display()
