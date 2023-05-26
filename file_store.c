@@ -17,6 +17,7 @@
 #include <winuser.h>
 
 #include "imgui.h"
+#include "file_store.h"
 //必要头文件包含
 
 #define msize 20
@@ -27,21 +28,7 @@ extern int maze[msize][msize];
 
 extern char MazeName[30];
 
-struct EdittedMaze{
-	int number;
-	char name[30];
-	int Maze[msize][msize];
-	struct EdittedMaze *next; 
-};//链表结点 结构定义 
-
-//用于保存Maze的函数 ，使用时直接调用即可 
-void StoreMaze();
-
-//用于加载MAZE的函数。每次打开游戏时调用，将已经保存的MAZE保存为一个链表，返回值为头结点指针 
-struct EdittedMaze *LoadMazeList();
-
-//用于删除结点的函数。还未实现 
-void DeleteMaze();
+int MazeNumber=1;
 
 void StoreMaze()
 {
@@ -74,37 +61,77 @@ void StoreMaze()
 struct EdittedMaze *LoadMazeList()
 {
 	FILE *fp;
-	struct EdittedMaze *head,*p,*ptr;
-	int number=1,i,j;
+	struct EdittedMaze *head,*p1,*p2;
+	int i,j;
 	
-	if((fp=fopen("Maze_List.txt","a"))==NULL){
+	if((fp=fopen("Maze_List.txt","r"))==NULL){
 		exit(-1);
 	}
 	
-	head=NULL;
-	p=NULL;
-	ptr=NULL;
+	head=CreateMazeList();
+	p1=NULL;
+	p2=head;
 	
 	while(!feof(fp)){
-		p=(struct EdittedMaze*)malloc(sizeof(struct EdittedMaze));
+		p1=(struct EdittedMaze*)malloc(sizeof(struct EdittedMaze));
 		
-		p->number=number;
-		number++;
+		fgetc(fp);//读掉换行符
+		 
+		p1->number=MazeNumber;
+		MazeNumber++;//给迷宫编号 
+		
+		fgets(p1->name,30,fp);//读名字 
+		
 		for(i=0;i<msize;i++){
 			for(j=0;j<msize;j++){
-				fscanf(fp,"%d",&p->Maze[i][j]);
+				fscanf(fp,"%d",&p1->Maze[i][j]);
 			}
-		}
+		}//读迷宫主体 
 		
-		if(head==NULL){
-			head=p;
-			ptr=head;
-			head->next=NULL;
-		}else{
-			ptr->next=p;
-			ptr=ptr->next;
+		p2->next=p1;
+		p1->front=p2;
+		p2=p2->next; 
+	}
+	
+	p2->next=head;
+	head->front=p2;
+	
+	return head;
+}
+
+struct EdittedMaze *CreateMazeList()
+{
+	struct EdittedMaze *head;
+	head=(struct EdittedMaze*)malloc(sizeof(struct EdittedMaze));
+	
+	head->next=head->front=NULL;
+	
+	return head;
+}
+
+void InsertMaze(struct EdittedMaze *head)
+{
+	struct EdittedMaze *p;
+	int    i,j;
+	
+	p=(struct EdittedMaze*)malloc(sizeof(struct EdittedMaze));
+	
+	p->number=MazeNumber;
+	MazeNumber++;
+	
+	for(i=0;MazeName[i]!='\0';i++){
+		p->name[i]=MazeName[i]; 
+	}
+	
+	for(i=0;i<msize;i++){
+		for(j=0;j<msize;j++){
+			p->Maze[i][j]=maze[i][j];
 		}
 	}
 	
-	return head;
+	head->front->next=p;
+	p->front=head->front;
+	p->next=head;
+	head->front=p;
+	
 }

@@ -272,6 +272,12 @@ void CharEventProcess(char ch)
 // 仅初始化执行一次
 void Main() 
 {
+	// 新增加载迷宫程序，这是头指针与操作指针定义 
+	/*struct EdittedMaze *head,*p;
+	head=NULL;
+	p=NULL;
+	int i,j;*/
+	
 	// 初始化窗口和图形系统
 	SetWindowTitle("EXPLORATION IN THE HAZE!");
 	//SetWindowSize(10, 10); // 单位 - 英寸
@@ -291,6 +297,22 @@ void Main()
 	SetPenColor("Red"); 
     SetPenSize(1);
     
+    //加载迷宫 慎用！！！出现了一些bug 
+    /*head=LoadMazeList();
+    
+    InitConsole();
+    for(p=head;p->number!=head->front->number;p=p->next){
+    	printf("%d",p->number);
+    	printf("\n");
+    	puts(p->name);
+    	printf("\n");
+    	for(i=0;i<msize;i++){
+    		for(j=0;j<msize;j++){
+    			printf("%d ",p->Maze[i][j]);
+    		}
+    	}
+    	printf("\n");
+    }//输出测试 */
 }
 
 //绘制迷宫 
