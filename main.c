@@ -27,7 +27,7 @@
 #define ROUTE 0
 //控制迷宫的复杂度，数值越大复杂度越低，最小值为0
 static int Rank = 1;
-
+static int FLAG = 0;	//迷宫是否有解 
 static double winwidth, winheight;   // 窗口尺寸
 
 //手动编辑判断变量 如果开启表示正在手动编辑 
@@ -345,6 +345,16 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					DrawLine(0,length);
 					EndFilledRegion();
 					SetPenColor("Red");
+				}else if (maze[i][j] == -2) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					SetPenColor("Green");
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion();
+					SetPenColor("Red");
 				}
 				if(player[i][j] == 6){
 					MovePen(x + length*j,y - length*i);
@@ -396,6 +406,16 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					MovePen(x + length*j,y - length*i);
 					StartFilledRegion(1); 
 					SetPenColor("Gray");
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion();
+					SetPenColor("Red");
+				}else if (maze[i][j] == -2) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					SetPenColor("Green");
 					DrawLine(length,0);
 					DrawLine(0,-1.0*length);
 					DrawLine(-1.0*length,0);
@@ -542,6 +562,12 @@ void drawMenu()
 	if (ifListHelp) {
 		selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListHelp,sizeof(menuListHelp)/sizeof(menuListHelp[0]));
 		if( selection>0 ) selectedLabel = menuListHelp[selection];
+		if ( selection == 1) {
+			Solve(2,2,maze);
+		}
+		if ( selection == 2) {
+			Solve(ccx,ccy,maze);
+		}
 	}
 		
 	// Size 菜单
@@ -694,3 +720,71 @@ void mazehelper(int maze[msize][msize], int x, int y) {
 		}
 	}
 }
+
+//擦除求解路径
+void clean(int maze[msize][msize]) {
+	int i, j;
+	for (i = 0; i < msize; ++i) {
+		for (j = 0; j < msize; ++j) {
+			if (maze[i][j] == -3 || maze[i][j] == -2) maze[i][j] = 0;
+		}
+	}
+} 
+
+//自动求解
+void Solve(int x, int y, int maze[msize][msize]) {
+	int direction[4][2] = { {0,1},  {1,0}, {0,-1}, {-1,0} };
+	int i, j, flag = 0;
+	for (i = 0; i < 4; ++i) {
+		if (maze[x+direction[i][0]][y+direction[i][1]] == 0 || maze[x+direction[i][0]][y+direction[i][1]] == 3) flag = 1;
+	}
+	if (!flag) {
+		maze[x][y] = -3;
+		return;
+	} else {
+		maze[x][y] = -2;
+		for (i = 0; i < 4; ++i) {
+			if (FLAG) return;
+			if (maze[x+direction[i][0]][y+direction[i][1]] == 0) {
+				Solve(x+direction[i][0],y+direction[i][1],maze);
+			} else if (maze[x+direction[i][0]][y+direction[i][1]] == 3) {
+				FLAG = 1;
+				return;
+			}
+		}
+		for (flag = 0,i = 0; i < 4; ++i) {
+			if (maze[x+direction[i][0]][y+direction[i][1]] == 0 || maze[x+direction[i][0]][y+direction[i][1]] == 3) flag = 1;
+		}
+		if (!flag && !FLAG) {
+			maze[x][y] = -3;
+			return;
+		}
+	}
+	return;
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
