@@ -22,10 +22,7 @@
 
 #define msize 20
 #define length 0.25
-//墙和路径的标识
-#define WALL  1
-#define ROUTE 0
-//控制迷宫的复杂度，数值越大复杂度越低，最小值为0
+
 static int Rank = 1;
 static int FLAG = 0;	//迷宫是否有解 
 static double winwidth, winheight;   // 窗口尺寸
@@ -94,7 +91,7 @@ void KeyboardEventProcess(int key, int event)
 				case VK_UP:
 					if(ccx == 0)
 						break;     
-                	if(maze[ccx-1][ccy] == 0)
+                	if(maze[ccx-1][ccy] == 0 || maze[ccx-1][ccy] == -2 || maze[ccx-1][ccy] == -3)
 					{
 						player[ccx][ccy] = 0;
 						ccx -=1;
@@ -121,7 +118,7 @@ void KeyboardEventProcess(int key, int event)
 			     case VK_DOWN:
 			     	if(ccx == msize-1)
 			     		break;
-			         if(maze[ccx+1][ccy] == 0)  
+			         if(maze[ccx+1][ccy] == 0 || maze[ccx+1][ccy] == -2 || maze[ccx+1][ccy] == -3)  
                 	{
                 		player[ccx][ccy] = 0;
                 		ccx += 1;
@@ -148,7 +145,7 @@ void KeyboardEventProcess(int key, int event)
 			     case VK_LEFT:
 			     	if(ccy == 0)
 			     		break;
-			         if(maze[ccx][ccy-1] == 0)  
+			         if(maze[ccx][ccy-1] == 0 || maze[ccx][ccy-1] == -2 || maze[ccx][ccy-1] == -3)  
                 	{
                 		player[ccx][ccy] = 0;
                 		ccy -= 1;
@@ -175,7 +172,7 @@ void KeyboardEventProcess(int key, int event)
 			     case VK_RIGHT:
 			     	if(ccy == msize-1)
 			     		break;
-			         if(maze[ccx][ccy+1] == 0)  
+			         if(maze[ccx][ccy+1] == 0 || maze[ccx][ccy+1] == -2 || maze[ccx][ccy+1] == -3)  
                 	{
                 		player[ccx][ccy] = 0;
                 		ccy += 1;
@@ -286,7 +283,7 @@ void Main()
 	// 注册时间响应函数
 	registerKeyboardEvent(KeyboardEventProcess);// 键盘
 	registerMouseEvent(MouseEventProcess);      // 鼠标
-	registerCharEvent(CharEventProcess);
+	registerCharEvent(CharEventProcess);		// 字符 
 	
 	SetPenColor("Red"); 
     SetPenSize(1);
@@ -446,7 +443,7 @@ void drawMenu()
 		"Restart  | Ctrl-R", // 快捷键必须采用[Ctrl-X]格式，放在字符串的结尾
 		"Exit   | Ctrl-E"};
 	static char * menuListEdit[] = {"Edit",
-		"Size",
+		"Clean",
 		"Regenerate",
 		"Edit Manually | Ctrl-M"};
 	static char * menuListHelp[] = {"Help",
@@ -556,6 +553,9 @@ void drawMenu()
 		if( selection==2){
 			mazehelper(maze,2,2);
 		}
+		if ( selection==1){
+			clean(maze);
+		}
 	}
 	
 	// Help 菜单
@@ -564,9 +564,11 @@ void drawMenu()
 		if( selection>0 ) selectedLabel = menuListHelp[selection];
 		if ( selection == 1) {
 			Solve(2,2,maze);
+			FLAG = 0;
 		}
 		if ( selection == 2) {
 			Solve(ccx,ccy,maze);
+			FLAG = 0;
 		}
 	}
 		
@@ -622,9 +624,8 @@ bool inBox(double x, double y, double x1, double x2, double y1, double y2)
 
 //迷宫生成 
 void CreateMaze(int maze[msize][msize], int x, int y) {
-	maze[x][y] = ROUTE;
+	maze[x][y] = 0;
  	int i, j, k;
-	//确保四个方向随机
 	int direction[4][2] = { { 1,0 },{ -1,0 },{ 0,1 },{ 0,-1 } };
 	for (i = 0; i < 4; i++) {
 		int r = rand() % 4;
@@ -637,28 +638,23 @@ void CreateMaze(int maze[msize][msize], int x, int y) {
 		direction[r][1] = temp;
 	}
  
-	//向四个方向开挖
 	for (i = 0; i < 4; i++) {
 		int dx = x;
 		int dy = y;
  
-		//控制挖的距离，由Rank来调整大小
 		int range = 1 + (Rank == 0 ? 0 : rand() % Rank);
 		while (range>0) {
 			dx += direction[i][0];
 			dy += direction[i][1];
  
-			//排除掉回头路
-			if (maze[dx][dy] == ROUTE) {
+			if (maze[dx][dy] == 0) {
 				break;
 			}
  
-			//判断是否挖穿路径
 			int count = 0;
 			for (j = dx - 1; j < dx + 2; j++) {
 				for (k = dy - 1; k < dy + 2; k++) {
-					//abs(j - dx) + abs(k - dy) == 1 确保只判断九宫格的四个特定位置
-					if (abs(j - dx) + abs(k - dy) == 1 && maze[j][k] == ROUTE) {
+					if (abs(j - dx) + abs(k - dy) == 1 && maze[j][k] == 0) {
 						count++;
 					}
 				}
@@ -668,12 +664,10 @@ void CreateMaze(int maze[msize][msize], int x, int y) {
 				break;
 			}
  
-			//确保不会挖穿时，前进
 			--range;
-			maze[dx][dy] = ROUTE;
+			maze[dx][dy] = 0;
 		}
  
-		//没有挖穿危险，以此为节点递归
 		if (range <= 0) {
 			CreateMaze(maze, dx, dy);
 		}
@@ -690,12 +684,11 @@ void mazehelper(int maze[msize][msize], int x, int y) {
 	} 
     srand((unsigned)time(NULL));
  
-	//最外围层设为路径的原因，为了防止挖路时挖出边界，同时为了保护迷宫主体外的一圈墙体被挖穿
 	for (i = 0; i < msize; i++){
-		maze[i][0] = ROUTE;
-		maze[0][i] = ROUTE;
-		maze[i][msize - 1] = ROUTE;
-		maze[msize - 1][i] = ROUTE;
+		maze[i][0] = 0;
+		maze[0][i] = 0;
+		maze[i][msize - 1] = 0;
+		maze[msize - 1][i] = 0;
 	}
  
 	//创造迷宫，（2，2）为起点
@@ -709,12 +702,10 @@ void mazehelper(int maze[msize][msize], int x, int y) {
 		maze[msize - 1][i] = -1;
 	}
  
-	//画迷宫的入口和出口
 	maze[2][1] = 2;
  
-	//由于算法随机性，出口有一定概率不在（L-3,L-2）处，此时需要寻找出口
 	for (i = msize - 3; i >= 0; i--) {
-		if (maze[i][msize - 3] == ROUTE) {
+		if (maze[i][msize - 3] == 0) {
 			maze[i][msize - 2] = 3;
 			break;
 		}
