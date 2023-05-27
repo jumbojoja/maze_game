@@ -57,6 +57,8 @@ int maze[msize][msize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 int player[msize][msize] = {0};
 static int ccx = 2, ccy = 2;
 static haveKey = 0;
+static int ifwin = 0;
+static int viewSize = 3;
  
 // 清屏函数，provided in libgraphics
 void DisplayClear(void); 
@@ -99,7 +101,7 @@ void KeyboardEventProcess(int key, int event)
 				case VK_UP:
 					if(ccx == 0)
 						break;     
-                	if(maze[ccx-1][ccy] == 0)
+                	if(maze[ccx-1][ccy] == 0 || maze[ccx-1][ccy] == 3)
 					{
 						player[ccx][ccy] = 0;
 						ccx -=1;
@@ -126,7 +128,7 @@ void KeyboardEventProcess(int key, int event)
 			     case VK_DOWN:
 			     	if(ccx == msize-1)
 			     		break;
-			         if(maze[ccx+1][ccy] == 0)  
+			         if(maze[ccx+1][ccy] == 0 || maze[ccx+1][ccy] == 3)  
                 	{
                 		player[ccx][ccy] = 0;
                 		ccx += 1;
@@ -153,7 +155,7 @@ void KeyboardEventProcess(int key, int event)
 			     case VK_LEFT:
 			     	if(ccy == 0)
 			     		break;
-			         if(maze[ccx][ccy-1] == 0)  
+			         if(maze[ccx][ccy-1] == 0 || maze[ccx][ccy-1] == 3)  
                 	{
                 		player[ccx][ccy] = 0;
                 		ccy -= 1;
@@ -180,7 +182,7 @@ void KeyboardEventProcess(int key, int event)
 			     case VK_RIGHT:
 			     	if(ccy == msize-1)
 			     		break;
-			         if(maze[ccx][ccy+1] == 0)  
+			         if(maze[ccx][ccy+1] == 0 || maze[ccx][ccy+1] == 3)  
                 	{
                 		player[ccx][ccy] = 0;
                 		ccy += 1;
@@ -206,6 +208,8 @@ void KeyboardEventProcess(int key, int event)
                      break;
                 default: break;
 			}
+			if(maze[ccx][ccy] == 3)
+				ifwin = 1;
 			break;
 		case KEY_UP:
 			 break;
@@ -300,13 +304,13 @@ void drawmaze(int maze[msize][msize], int x, int y)
 	SetPenColor("Red");
 	for (i = 0; i < msize; i++) {
 		for (j = 0; j < msize; j++) {
-			if (maze[i][j] == 0 && abs(i-ccx) <= 2 && abs(j-ccy)<=2) {
+			if (maze[i][j] == 0 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
 				MovePen(x + length*j,y - length*i);
 				DrawLine(length,0);
 				DrawLine(0,-1.0*length);
 				DrawLine(-1.0*length,0);
 				DrawLine(0,length);
-			} else if (maze[i][j] == 1 && abs(i-ccx) <= 2 && abs(j-ccy)<=2) {
+			} else if (maze[i][j] == 1 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
 				MovePen(x + length*j,y - length*i);
 				StartFilledRegion(1); 
 					DrawLine(length,0);
@@ -376,6 +380,11 @@ void drawMenu()
 	static char * menuListSize[] = {"Set size",
 		"15*15",
 		"10*10"};
+	static char * menuListView[] = {"Set view",
+		"easy",
+		"difficult",
+		"blind",
+		"God's perspective"};
 	static char * selectedLabel = NULL;
 	
 	static int ifStartbutton = 1;
@@ -384,6 +393,7 @@ void drawMenu()
 	static int ifListEdit = 0;
 	static int ifListHelp = 0;
 	static int ifListSize = 1; 
+	static int ifListView = 0;
 	static int ifdrawmaze = 0;
 
 	double fH = GetFontHeight(); //字体高度
@@ -403,6 +413,7 @@ void drawMenu()
 			ifListPause = 1;
 			ifListEdit = 1;
 			ifListHelp = 1;
+			ifListView = 1;
 			ifListSize = 0;
 			ifdrawmaze = 1;
 			IsEditManually = FALSE;
@@ -474,6 +485,20 @@ void drawMenu()
 		if( selection>0 ) selectedLabel = menuListSize[selection];
 	}
 	
+	//View 菜单
+	if (ifListView) {
+		selection = menuList(GenUIID(0),x+3*w,y-h, w, wlist, h, menuListView,sizeof(menuListView)/sizeof(menuListView[0]));
+		if( selection>0 ) selectedLabel = menuListView[selection];
+		if( selection == 1)
+			viewSize = 2;
+		if( selection == 2)
+			viewSize = 1;
+		if( selection == 3)
+			viewSize = 0;
+		if( selection == 4)
+			viewSize = 100;
+	}
+	
 	//绘制迷宫 
 	if (ifdrawmaze) {
 		x = winwidth/13;
@@ -490,6 +515,17 @@ void drawMenu()
 			StoreMaze();
 		}
 	}//新增保存按钮 
+	
+	//判断是否到达终点
+	if(ifwin){
+		ifdrawmaze = 0;
+		MovePen(4, 4);
+		DrawTextString("You win!");
+		ifwin = 0;
+		ccx = 2;
+		ccy = 2;
+	}
+	 
 }
 
 void display()
