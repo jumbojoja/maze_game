@@ -59,9 +59,10 @@ int maze[msize][msize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 
 int player[msize][msize] = {0};
 static int ccx = 2, ccy = 2;
-static haveKey = 0;
+static int haveKey = 0;
 static int ifwin = 0;
 static int viewSize = 3;
+static int ClearSolve = 1;
  
 // 清屏函数，provided in libgraphics
 void DisplayClear(void);
@@ -84,6 +85,7 @@ void KeyboardEventProcess(int key, int event)
 	x = winwidth/15 + 0.3;
 	y = winheight/8*7 - 0.2;
 	uiGetKeyboard(key,event); // GUI获取键盘
+	if (ClearSolve == 0) clean(maze);
 	display();
 	switch(event)
 	{
@@ -367,7 +369,7 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					DrawLine(0,length);
 					EndFilledRegion();
 					SetPenColor("Red");
-				}else if (maze[i][j] == -2) {
+				}else if (maze[i][j] == -2 && ClearSolve || maze[i][j] == -2 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
 					MovePen(x + length*j,y - length*i);
 					StartFilledRegion(1); 
 					SetPenColor("Green");
@@ -532,6 +534,7 @@ void drawMenu()
 		}
 		if ( selection==1){
 			clean(maze);
+			ClearSolve = 1;
 		}
 	}
 	
@@ -540,12 +543,14 @@ void drawMenu()
 		selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListHelp,sizeof(menuListHelp)/sizeof(menuListHelp[0]));
 		if( selection>0 ) selectedLabel = menuListHelp[selection];
 		if ( selection == 1) {
-			Solve(2,2,maze);
+			Solve(ccx,ccy,maze);
 			FLAG = 0;
+			ClearSolve = 1;
 		}
 		if ( selection == 2) {
 			Solve(ccx,ccy,maze);
 			FLAG = 0;
+			ClearSolve = 0;
 		}
 	}
 		
