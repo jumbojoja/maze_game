@@ -30,6 +30,9 @@ static double winwidth, winheight;   // 窗口尺寸
 //手动编辑判断变量 如果开启表示正在手动编辑 
 bool IsEditManually = FALSE;
 
+//地图选择判断变量 如果开启表示正在选择地图 
+bool IsChoosingMap = FALSE;
+
 //迷宫开始画的坐标，可供调用 
 static double startx,starty;
 
@@ -58,8 +61,12 @@ int maze[msize][msize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 						  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; 
 
 int player[msize][msize] = {0};
+
 static int ccx = 2, ccy = 2;
+
 static haveKey = 0;
+
+struct EdittedMaze *head,*p;
  
 // 清屏函数，provided in libgraphics
 void DisplayClear(void);
@@ -269,14 +276,13 @@ void CharEventProcess(char ch)
 // 仅初始化执行一次
 void Main() 
 {
-	// 新增加载迷宫程序，这是头指针与操作指针定义 
-	/*struct EdittedMaze *head,*p;
+	// 新增加载迷宫程序，这是头指针与操作指针
 	head=NULL;
 	p=NULL;
-	int i,j;*/
+	int i,j;
 	
 	// 初始化窗口和图形系统
-	SetWindowTitle("EXPLORATION IN THE HAZE!");
+	SetWindowTitle("CMAZE!");
 	//SetWindowSize(10, 10); // 单位 - 英寸
 	//SetWindowSize(20, 10);
 	//SetWindowSize(10, 20);  // 如果屏幕尺寸不够，则按比例缩小
@@ -286,18 +292,18 @@ void Main()
     winwidth = GetWindowWidth();
     winheight = GetWindowHeight();
     
-	// 注册时间响应函数
+	// 注册响应函数
 	registerKeyboardEvent(KeyboardEventProcess);// 键盘
 	registerMouseEvent(MouseEventProcess);      // 鼠标
-	registerCharEvent(CharEventProcess);		// 字符 
+	registerCharEvent(CharEventProcess);		// 字符
 	
 	SetPenColor("Red"); 
     SetPenSize(1);
     
-    //加载迷宫 慎用！！！出现了一些bug 
-    /*head=LoadMazeList();
-    
-    InitConsole();
+    //加载迷宫 bug已修复 
+    head=LoadMazeList();
+    p=head;
+    /*InitConsole();
     for(p=head;p->number!=head->front->number;p=p->next){
     	printf("%d",p->number);
     	printf("\n");
@@ -309,7 +315,7 @@ void Main()
     		}
     	}
     	printf("\n");
-    }//输出测试 */
+    }//输出测试*/
 }
 
 //绘制迷宫 
@@ -467,7 +473,8 @@ void drawMenu()
 	static char * menuListEdit[] = {"Edit",
 		"Clean",
 		"Regenerate",
-		"Edit Manually | Ctrl-M"};
+		"Edit Manually | Ctrl-M",
+		"Choose Maps"};
 	static char * menuListHelp[] = {"Help",
 		"Auto Solve  | Ctrl-A",
 		"Tips"};
@@ -505,6 +512,7 @@ void drawMenu()
 			ifListSize = 0;
 			ifdrawmaze = 1;
 			IsEditManually = FALSE;
+			IsChoosingMap = FALSE; 
 			ifLogo = 0;
 			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
 		}
@@ -537,6 +545,7 @@ void drawMenu()
 		selection = menuList(GenUIID(0), x, y-h, w, wlist, h, menuListPause, sizeof(menuListPause)/sizeof(menuListPause[0]));
 		if( selection>0 ) selectedLabel = menuListPause[selection];
 		if( selection==2 ) {	// 退回主菜单 
+			
 			ifStartbutton = 1;
 			ifExitbutton = 1;
 			ifListPause = 0;
@@ -545,6 +554,8 @@ void drawMenu()
 			ifListSize = 1;
 			ifdrawmaze = 0;
 			ifLogo = 1;
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE;
 		}
 	}
 		
@@ -574,9 +585,22 @@ void drawMenu()
 		}
 		if( selection==2){
 			mazehelper(maze,2,2);
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE;
 		}
 		if ( selection==1){
 			clean(maze);
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE;
+		}
+		if( selection == 4){
+			int i,j;
+			IsChoosingMap = TRUE;
+			for(i=0;i<msize;i++){
+				for(j=0;j<msize;j++){
+					maze[i][j]=p->Maze[i][j];
+				}
+			}
 		}
 	}
 	
@@ -614,10 +638,24 @@ void drawMenu()
 		if (button(GenUIID(0), 3, winheight/13, w, h, "Save")){
 			IsEditManually = FALSE;
 			StoreMaze();
-			int i; 
+			InsertMaze(head);
+			int i,j; 
 			for(i=0;i<30;i++){
 				MazeName[i] = '\0';
 			}
+			/*InitConsole();
+    		for(p=head;p->number!=head->front->number;p=p->next){
+    			printf("%d",p->number);
+    			printf("\n");
+    			puts(p->name);
+    			printf("\n");
+    			for(i=0;i<msize;i++){
+    				for(j=0;j<msize;j++){
+    					printf("%d ",p->Maze[i][j]);
+    				}
+    			}
+    			printf("\n");
+			}//输出测试*/
 		}//保存后清零名称数组 
 	}
 	//新增保存按钮 
@@ -627,7 +665,34 @@ void drawMenu()
 		drawLabel(5, winheight/13, "迷宫名称");
 		if( textbox(GenUIID(0), 5+TextStringWidth("迷宫名称"), winheight/13, 3*w, h, MazeName, sizeof(MazeName)) )
 		;
-	}//新增迷宫名称文本框 
+	}//新增迷宫名称文本框
+	
+	if(IsChoosingMap){
+		drawLabel(1,winheight/2,p->name);
+		if (button(GenUIID(0), 3, winheight/13, w, h, "NEXT")){
+			p=p->next;
+			int i,j;
+			for(i=0;i<msize;i++){
+				for(j=0;j<msize;j++){
+					maze[i][j]=p->Maze[i][j];
+				}
+			}
+		}
+		if (button(GenUIID(0), 5, winheight/13, w, h, "FRONT")){
+			p=p->front;
+			int i,j;
+			for(i=0;i<msize;i++){
+				for(j=0;j<msize;j++){
+					maze[i][j]=p->Maze[i][j];
+				}
+			}
+		}
+		if (button(GenUIID(0), 7, winheight/13, w, h, "DELETE")){
+			DeleteMaze(head);
+		}
+	}
+	
+	
 }
 
 void display()
