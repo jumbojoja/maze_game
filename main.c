@@ -60,9 +60,10 @@ int maze[msize][msize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 
 int player[msize][msize] = {0};
 static int ccx = 2, ccy = 2;
-static haveKey = 0;
+static int haveKey = 0;
 static int ifwin = 0;
 static int viewSize = 3;
+static int ClearSolve = 1;
  
 // 清屏函数，provided in libgraphics
 void DisplayClear(void);
@@ -85,6 +86,7 @@ void KeyboardEventProcess(int key, int event)
 	x = winwidth/15 + 0.3;
 	y = winheight/8*7 - 0.2;
 	uiGetKeyboard(key,event); // GUI获取键盘
+	if (ClearSolve == 0) clean(maze);
 	display();
 	switch(event)
 	{
@@ -324,7 +326,7 @@ void drawmaze(int maze[msize][msize], int x, int y)
 	SetPenColor("Red");
 	for (i = 0; i < msize; i++) {
 		for (j = 0; j < msize; j++) {
-			if (maze[i][j] == 0 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
+			if ((maze[i][j] == 0 || maze[i][j] == -3) && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
 				MovePen(x + length*j,y - length*i);
 				DrawLine(length,0);
 				DrawLine(0,-1.0*length);
@@ -368,7 +370,7 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					DrawLine(0,length);
 					EndFilledRegion();
 					SetPenColor("Red");
-				}else if (maze[i][j] == -2) {
+				}else if (maze[i][j] == -2 && ClearSolve || maze[i][j] == -2 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
 					MovePen(x + length*j,y - length*i);
 					StartFilledRegion(1); 
 					SetPenColor("Green");
@@ -414,7 +416,7 @@ void drawMenu()
 		"easy",
 		"difficult",
 		"blind",
-		"God's perspective"};
+		"God"};
 	static char * selectedLabel = NULL;
 	
 	static int ifStartbutton = 1;
@@ -479,6 +481,18 @@ void drawMenu()
 	if (ifListPause) {
 		selection = menuList(GenUIID(0), x, y-h, w, wlist, h, menuListPause, sizeof(menuListPause)/sizeof(menuListPause[0]));
 		if( selection>0 ) selectedLabel = menuListPause[selection];
+		if( selection==1) {
+			int i, j;
+			clean(maze);
+			for (i = 0; i < msize; ++i) {
+		 		for (j = 0; j < msize; ++j) {
+		 			player[i][j] = 0;
+			 	}
+		 	}
+		 	ccx = 2;
+		 	ccy = 2;
+		 	player[ccx][ccy] = 6;
+		}
 		if( selection==2 ) {	// 退回主菜单 
 			ifStartbutton = 1;
 			ifExitbutton = 1;
@@ -487,6 +501,7 @@ void drawMenu()
 			ifListHelp = 0;
 			ifListSize = 1;
 			ifdrawmaze = 0;
+			ifListView = 0;
 			ifLogo = 1;
 		}
 	}
@@ -520,6 +535,7 @@ void drawMenu()
 		}
 		if ( selection==1){
 			clean(maze);
+			ClearSolve = 1;
 		}
 	}
 	
@@ -528,12 +544,14 @@ void drawMenu()
 		selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListHelp,sizeof(menuListHelp)/sizeof(menuListHelp[0]));
 		if( selection>0 ) selectedLabel = menuListHelp[selection];
 		if ( selection == 1) {
-			Solve(2,2,maze);
+			Solve(ccx,ccy,maze);
 			FLAG = 0;
+			ClearSolve = 1;
 		}
 		if ( selection == 2) {
 			Solve(ccx,ccy,maze);
 			FLAG = 0;
+			ClearSolve = 0;
 		}
 	}
 		
@@ -545,7 +563,7 @@ void drawMenu()
 	
 	//View 菜单
 	if (ifListView) {
-		selection = menuList(GenUIID(0),x+3*w,y-h, w, wlist, h, menuListView,sizeof(menuListView)/sizeof(menuListView[0]));
+		selection = menuList(GenUIID(0),x+3*w,y-h, w*1.2, wlist/2, h, menuListView,sizeof(menuListView)/sizeof(menuListView[0]));
 		if( selection>0 ) selectedLabel = menuListView[selection];
 		if( selection == 1)
 			viewSize = 2;
@@ -576,12 +594,21 @@ void drawMenu()
 	
 	//判断是否到达终点
 	if(ifwin){
-		ifdrawmaze = 0;
+		int i, j; 
+		DisplayClear();
 		MovePen(4, 4);
 		DrawTextString("You win!");
 		ifwin = 0;
+		mazehelper(maze,2,2);
 		ccx = 2;
 		ccy = 2;
+		//更新player
+		 for (i = 0; i < msize; ++i) {
+		 	for (j = 0; j < msize; ++j) {
+		 		player[i][j] = 0;
+			 }
+		 }
+		 player[ccx][ccy] = 6;
 	}
 	 
 	
