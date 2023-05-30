@@ -27,6 +27,7 @@ static int Rank = 1;
 static int FLAG = 0;	//迷宫是否有解 
 static double winwidth, winheight;   // 窗口尺寸
 
+
 //手动编辑判断变量 如果开启表示正在手动编辑 
 bool IsEditManually = FALSE;
 
