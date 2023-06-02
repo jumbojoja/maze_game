@@ -412,14 +412,13 @@ void drawMenu()
 		"Clean",
 		"Regenerate",
 		"Edit Manually | Ctrl-M",
-		"Choose Maps",
-		"Clear Solve"};
-	static char * menuListHelp[] = {"Help",
+		"Choose Maps"};
+	static char * menuListSolve[] = {"Solve",
 		"Auto Solve  | Ctrl-A",
 		"Tips"};
-	static char * menuListSize[] = {"Set size",
-		"15*15",
-		"10*10"};
+	static char * menuListHelp[] = {"    Help",
+		"Instructions",
+		"About"};
 	static char * menuListView[] = {"Set view",
 		"easy",
 		"difficult",
@@ -431,17 +430,19 @@ void drawMenu()
 	static int ifExitbutton = 1;
 	static int ifListPause = 0;
 	static int ifListEdit = 0;
-	static int ifListHelp = 0;
-	static int ifListSize = 1; 
+	static int ifListSolve = 0;
+	static int ifListHelp = 1; 
 	static int ifListView = 0;
 	static int ifdrawmaze = 0;
 	static int ifLogo = 1;
+	static int ifInstr = 0; 
+	static int ifInstrButton = 1;
 	
 	double fH = GetFontHeight(); //字体高度
 	double x = 0; //fH/8;
 	double y = winheight;
 	double h = fH*1.5; // 控件高度
-	double w = TextStringWidth(menuListHelp[0])*2; // 控件宽度
+	double w = TextStringWidth(menuListSolve[0])*2; // 控件宽度
 	double wlist = TextStringWidth(menuListEdit[3])*1.2;
 	int    selection;
 	
@@ -453,31 +454,60 @@ void drawMenu()
 			ifExitbutton = 0;
 			ifListPause = 1;
 			ifListEdit = 1;
-			ifListHelp = 1;
+			ifListSolve = 1;
 			ifListView = 1;
-			ifListSize = 0;
+			ifListHelp = 0;
 			ifdrawmaze = 1;
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE; 
 			ifLogo = 0;
+			ifInstr = 0;
+			ifInstrButton = 0;
 			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
 		}
 	}
 	
 	//画logo
 	if (ifLogo) {
-		SetPenColor("Orange");
-		MovePen(winwidth/2-w*3.5, winheight/2+h*7);
+		SetPenColor("Red");
+		MovePen(winwidth/2-w*3, winheight/2+h*7);
 		DrawTextString(" .ooooo.      ooo.    .oo.    .oo.          .oooo.          oooooooo    .ooooo.    ");
-		MovePen(winwidth/2-w*3.5, winheight/2+h*7-fH);
+		MovePen(winwidth/2-w*3, winheight/2+h*7-fH);
 		DrawTextString("d88'  `'Y8    `888P'Y88bP'Y88b    `P    )88b      d'''7d8P      d88'  `88b  ");
-		MovePen(winwidth/2-w*3.5, winheight/2+h*7-2*fH);
+		MovePen(winwidth/2-w*3, winheight/2+h*7-2*fH);
 		DrawTextString("888               888      888      888      .oP'888          .d8P'      888ooo888  ");
-		MovePen(winwidth/2-w*3.5, winheight/2+h*7-3*fH);
-		DrawTextString("888      .o8    888      888      888    d8(   888      .d8P'    .P  888        .o ");
-		MovePen(winwidth/2-w*3.5, winheight/2+h*7-4*fH);
+		MovePen(winwidth/2-w*3, winheight/2+h*7-3*fH);
+		DrawTextString("888      .o8    888      888      888    d8(   888      .d8P'    .P   888        .o ");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-4*fH);
 		DrawTextString("`Y8bod8P'  o888o  o888o  o888o  `Y888""8o  d8888888P    `Y8bod8P'  ");
 	} 
+	
+	// 操作提示
+	if (ifInstr) {
+		SetPenColor("Orange");
+		MovePen(winwidth/2+1.8*w, winheight/2);
+		DrawTextString("Use <- ^ v -> to move.");
+		MovePen(winwidth/2+1.8*w, winheight/2-fH);
+		DrawTextString("Pause->Restart to restart.");
+		MovePen(winwidth/2+1.8*w, winheight/2-2*fH);
+		DrawTextString("Edit->Clean to clear solved path.");
+		MovePen(winwidth/2+1.8*w, winheight/2-3*fH);
+		DrawTextString("Edit->Regenerate to regenerate maze.");
+		MovePen(winwidth/2+1.8*w, winheight/2-4*fH);
+		DrawTextString("Edit->Edit Manually to edit maze.");
+		MovePen(winwidth/2+1.8*w, winheight/2-5*fH);
+		DrawTextString("Solve->Auto Solve to solve maze.");
+		MovePen(winwidth/2+1.8*w, winheight/2-6*fH);
+		DrawTextString("Solve->Tips to see tips.");
+		MovePen(winwidth/2+1.8*w, winheight/2-7*fH);
+		DrawTextString("Set view to set your view.");
+		if (ifInstrButton) {
+			if (button(GenUIID(0), winwidth/2+1.8*w, winheight/2-9*fH, w, h, "Close")) {
+				ifInstr = 0;
+				ifInstrButton = 0;
+			}
+		}
+	}
 	
 	// 退出按钮 
 	if (ifExitbutton) {
@@ -508,8 +538,8 @@ void drawMenu()
 			ifExitbutton = 1;
 			ifListPause = 0;
 			ifListEdit = 0;
-			ifListHelp = 0;
-			ifListSize = 1;
+			ifListSolve = 0;
+			ifListHelp = 1;
 			ifdrawmaze = 0;
 			ifListView = 0;
 			ifLogo = 1;
@@ -551,6 +581,7 @@ void drawMenu()
 			clean(maze);
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE;
+			ClearSolve = 1;
 		}
 		if( selection == 4){
 			int i,j;
@@ -561,16 +592,12 @@ void drawMenu()
 				}
 			}
 		}
-		
-		if( selection == 5){
-			ClearSolve = 1;
-		}
 	}
 	
-	// Help 菜单
-	if (ifListHelp) {
-		selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListHelp,sizeof(menuListHelp)/sizeof(menuListHelp[0]));
-		if( selection>0 ) selectedLabel = menuListHelp[selection];
+	// Solve 菜单
+	if (ifListSolve) {
+		selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListSolve,sizeof(menuListSolve)/sizeof(menuListSolve[0]));
+		if( selection>0 ) selectedLabel = menuListSolve[selection];
 		if ( selection == 1) {
 			Solve(ccx,ccy,maze);
 			FLAG = 0;
@@ -583,10 +610,14 @@ void drawMenu()
 		}
 	}
 		
-	// Size 菜单
-	if (ifListSize) {
-		selection = menuList(GenUIID(0),winwidth/2-0.5*w,winheight/2 - h*1.2*2, w, wlist, h, menuListSize,sizeof(menuListSize)/sizeof(menuListSize[0]));
-		if( selection>0 ) selectedLabel = menuListSize[selection];
+	// Help 菜单
+	if (ifListHelp) {
+		selection = menuList(GenUIID(0),winwidth/2-0.5*w,winheight/2 - h*1.2*2, w, wlist, h, menuListHelp,sizeof(menuListHelp)/sizeof(menuListHelp[0]));
+		if( selection>0 ) selectedLabel = menuListHelp[selection];
+		if( selection == 1) {
+			ifInstr = 1;
+			ifInstrButton = 1;
+		}
 	}
 	
 	//View 菜单
