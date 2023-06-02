@@ -27,6 +27,9 @@ static int Rank = 1;
 static int FLAG = 0;	//迷宫是否有解 
 static double winwidth, winheight;   // 窗口尺寸
 
+//冒险模式判断变量，如果开启表示正在冒险模式 
+bool IsAdventuring = FALSE; 
+
 //手动编辑判断变量 如果开启表示正在手动编辑 
 bool IsEditManually = FALSE;
 
@@ -64,11 +67,11 @@ int player[msize][msize] = {0};
 
 static int ccx = 2, ccy = 2;
 
-struct EdittedMaze *head,*p;
+struct EdittedMaze *head,*p,*adventure_head;
 
 static int haveKey = 0;
 static int ifwin = 0;
-static int viewSize = 3;
+int viewSize = 3; //这里我把这个视野静态取消了，因为我在剧情里面需要调视野 by LWJ 
 static int ClearSolve = 1;
 
  
@@ -308,10 +311,11 @@ void Main()
     SetPenSize(1);
     
     //加载迷宫 bug已修复 
-    head=LoadMazeList();
+    head=LoadMazeList("Maze_List.txt");
     p=head;
+    adventure_head=LoadMazeList("Adventure_List.txt");
     /*InitConsole();
-    for(p=head;p->number!=head->front->number;p=p->next){
+    for(p=adventure_head;p->number!=adventure_head->front->number;p=p->next){
     	printf("%d",p->number);
     	printf("\n");
     	puts(p->name);
@@ -429,6 +433,7 @@ void drawMenu()
 	
 	static int ifStartbutton = 1;
 	static int ifExitbutton = 1;
+	static int ifAdventureButton = 1;
 	static int ifListPause = 0;
 	static int ifListEdit = 0;
 	static int ifListHelp = 0;
@@ -451,6 +456,7 @@ void drawMenu()
 		if (button(GenUIID(0), winwidth/2-0.5*w, winheight/2, w, h, "Start")) {
 			ifStartbutton = 0;
 			ifExitbutton = 0;
+			ifAdventureButton = 0;
 			ifListPause = 1;
 			ifListEdit = 1;
 			ifListHelp = 1;
@@ -506,6 +512,7 @@ void drawMenu()
 			
 			ifStartbutton = 1;
 			ifExitbutton = 1;
+			ifAdventureButton = 1;
 			ifListPause = 0;
 			ifListEdit = 0;
 			ifListHelp = 0;
@@ -515,6 +522,7 @@ void drawMenu()
 			ifLogo = 1;
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE;
+			IsAdventuring = FALSE;
 		}
 	}
 		
@@ -525,8 +533,11 @@ void drawMenu()
 		if( selection>0 ) selectedLabel = menuListEdit[selection];
 		if( selection==3 ){
 			IsEditManually = TRUE;
+			IsAdventuring = FALSE;
+			IsChoosingMap = FALSE;
 			player[ccx][ccy] = 0;
 			if(IsEditManually){
+				viewSize = 100;
 				ifdrawmaze = 1; 
 				int i, j;
 				for(i=0;i<msize;i++){
@@ -546,6 +557,10 @@ void drawMenu()
 			mazehelper(maze,2,2);
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE;
+		 	/*player[ccx][ccy] = 0;
+			ccx = 2;
+		 	ccy = 2;
+		 	player[ccx][ccy] = 6;*/
 		}
 		if ( selection==1){
 			clean(maze);
@@ -555,6 +570,9 @@ void drawMenu()
 		if( selection == 4){
 			int i,j;
 			IsChoosingMap = TRUE;
+			IsEditManually = FALSE;
+			IsAdventuring = FALSE;
+			p = head;
 			for(i=0;i<msize;i++){
 				for(j=0;j<msize;j++){
 					maze[i][j]=p->Maze[i][j];
@@ -640,10 +658,10 @@ void drawMenu()
 
 	
 	//判断是否到达终点
-	if(ifwin){
+	if(ifwin&&!IsAdventuring){
 		int i, j; 
 		DisplayClear();
-		MovePen(4, 4);
+		MovePen(winwidth/2 - TextStringWidth("You win!"), winheight/2);
 		DrawTextString("You win!");
 		ifwin = 0;
 		mazehelper(maze,2,2);
@@ -690,6 +708,30 @@ void drawMenu()
 		}
 		if (button(GenUIID(0), 7, winheight/13, w, h, "DELETE")){
 			DeleteMaze(head);
+		}
+		if (button(GenUIID(0), 1, winheight/2 - 1.2*h , w, h, "Play")){
+			IsChoosingMap = FALSE;
+			player[ccx][ccy] = 6;
+		}
+	}
+	
+	if(ifAdventureButton){
+		if (button(GenUIID(0), winwidth/2-w, winheight/2 + h*1.2, 2*w, h, "ADVENTURE")){
+			IsAdventuring = TRUE;
+			ifStartbutton = 0;
+			ifExitbutton = 0;
+			ifAdventureButton = 0;
+			ifListPause = 1;
+			ifListEdit = 1;
+			ifListHelp = 1;
+			ifListView = 1;
+			ifListSize = 0;
+			ifdrawmaze = 1;
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE; 
+			ifLogo = 0;//一系列的按钮和状态量操作
+			
+			StartAdventure(); 
 		}
 	}
 	

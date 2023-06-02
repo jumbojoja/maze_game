@@ -61,7 +61,7 @@ void StoreMaze()
 		}
 }
 
-struct EdittedMaze *LoadMazeList()
+struct EdittedMaze *LoadMazeList( char str[] )
 {
 	char ch;
 	FILE *fp;
@@ -69,7 +69,7 @@ struct EdittedMaze *LoadMazeList()
 	int i,j,k=0;
 	int flag=0;
 	
-	if((fp=fopen("Maze_List.txt","r"))==NULL){
+	if((fp=fopen(str,"r"))==NULL){
 		exit(-1);
 	}
 	

@@ -24,7 +24,7 @@ HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
 CommandLine=
-Folders=lib
+Folders=adventure,file_store,lib
 IncludeVersionInfo=0
 SupportXPThemes=0
 <<<<<<< HEAD
@@ -34,7 +34,7 @@ UnitCount=28
 =======
 CompilerSet=1
 CompilerSettings=0000000000000000001000000
-UnitCount=22
+UnitCount=23
 >>>>>>> 095111c815419aa359f4b7d45d2bff7f0cf7c2ab
 
 [VersionInfo]
@@ -259,7 +259,7 @@ BuildCmd=
 [Unit21]
 FileName=file_store.c
 CompileCpp=0
-Folder=
+Folder=file_store
 Compile=1
 Link=1
 Priority=1000
@@ -268,7 +268,7 @@ BuildCmd=
 
 [Unit22]
 FileName=file_store.h
-Folder=maze
+Folder=file_store
 Compile=1
 Link=1
 Priority=1000
@@ -277,9 +277,9 @@ BuildCmd=
 CompileCpp=0
 
 [Unit23]
-FileName=libgraphics\strlib.c
+FileName=adventure.c
 CompileCpp=0
-Folder=lib
+Folder=adventure
 Compile=1
 Link=1
 Priority=1000
