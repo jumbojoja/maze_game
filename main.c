@@ -19,6 +19,7 @@
 
 #include "imgui.h"
 #include "file_store.h"
+#include "paperwork.h"
 
 #define msize 20
 #define length 0.25
@@ -87,6 +88,12 @@ double ScaleYInches(int y);
 
 //判断鼠标是否在迷宫内函数 
 bool inBox(double x0, double y0, double x1, double x2, double y1, double y2);
+
+//写指南函数 
+void WriteInstructions(double winwidth, double winheight, double w, double fH);
+
+//写关于函数 
+void WriteAbout(double winwidth, double winheight, double fH);
 
 // 用户的键盘事件响应函数
 void KeyboardEventProcess(int key, int event)
@@ -437,11 +444,13 @@ void drawMenu()
 	static int ifListEdit = 0;
 	static int ifListSolve = 0;
 	static int ifListHelp = 1; 
+	static int ifListSize = 0; 
 	static int ifListView = 0;
 	static int ifdrawmaze = 0;
 	static int ifLogo = 1;
 	static int ifInstr = 0; 
 	static int ifInstrButton = 1;
+	static int IsDisplayAbout = 0;
 	
 	double fH = GetFontHeight(); //字体高度
 	double x = 0; //fH/8;
@@ -490,23 +499,7 @@ void drawMenu()
 	
 	// 操作提示
 	if (ifInstr) {
-		SetPenColor("Orange");
-		MovePen(winwidth/2+1.8*w, winheight/2);
-		DrawTextString("Use <- ^ v -> to move.");
-		MovePen(winwidth/2+1.8*w, winheight/2-fH);
-		DrawTextString("Pause->Restart to restart.");
-		MovePen(winwidth/2+1.8*w, winheight/2-2*fH);
-		DrawTextString("Edit->Clean to clear solved path.");
-		MovePen(winwidth/2+1.8*w, winheight/2-3*fH);
-		DrawTextString("Edit->Regenerate to regenerate maze.");
-		MovePen(winwidth/2+1.8*w, winheight/2-4*fH);
-		DrawTextString("Edit->Edit Manually to edit maze.");
-		MovePen(winwidth/2+1.8*w, winheight/2-5*fH);
-		DrawTextString("Solve->Auto Solve to solve maze.");
-		MovePen(winwidth/2+1.8*w, winheight/2-6*fH);
-		DrawTextString("Solve->Tips to see tips.");
-		MovePen(winwidth/2+1.8*w, winheight/2-7*fH);
-		DrawTextString("Set view to set your view.");
+		WriteInstructions(winwidth,winheight,w,fH); 
 		if (ifInstrButton) {
 			if (button(GenUIID(0), winwidth/2+1.8*w, winheight/2-9*fH, w, h, "Close")) {
 				ifInstr = 0;
@@ -581,16 +574,14 @@ void drawMenu()
 					maze[i][msize - 1] = -1;
 					maze[msize - 1][i] = -1;
 				}
+				maze[2][1]=2;
+				maze[msize-3][msize-2]=3;
 			}
 		}
 		if( selection==2){
 			mazehelper(maze,2,2);
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE;
-		 	/*player[ccx][ccy] = 0;
-			ccx = 2;
-		 	ccy = 2;
-		 	player[ccx][ccy] = 6;*/
 		}
 		if ( selection==1){
 			clean(maze);
@@ -635,6 +626,24 @@ void drawMenu()
 		if( selection == 1) {
 			ifInstr = 1;
 			ifInstrButton = 1;
+		}
+		if( selection == 2) {
+			DisplayClear();
+			IsDisplayAbout = 1;
+			ifStartbutton = 0;
+			ifExitbutton = 0;
+			ifAdventureButton = 0;
+			ifListPause = 0;
+			ifListEdit = 0;
+			ifListSolve = 0;
+			ifListView = 0;
+			ifListHelp = 0;
+			ifdrawmaze = 0;
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE; 
+			ifLogo = 0;
+			ifInstr = 0;
+			ifInstrButton = 0;
 		}
 	}
 	
@@ -706,10 +715,37 @@ void drawMenu()
 		 }
 		 player[ccx][ccy] = 6;
 
+	}else if(ifwin&&IsAdventuring){
+		int i, j; 
+		DisplayClear();
+		if(p==adventure_head->front){
+			MovePen(winwidth/2 - TextStringWidth("You win!"), winheight/2);
+			DrawTextString("You win!");
+		}else{
+			MovePen(winwidth/2 - TextStringWidth("next one"), winheight/2);
+			DrawTextString("next one");
+		}
+		ifwin = 0;
+		p=p->next;
+		for (i = 0; i < msize; ++i) {
+		 	for (j = 0; j < msize; ++j) {
+		 		maze[i][j]=p->Maze[i][j];
+			 }
+		 }
+		ccx = 2;
+		ccy = 2;
+		//更新player
+		 for (i = 0; i < msize; ++i) {
+		 	for (j = 0; j < msize; ++j) {
+		 		player[i][j] = 0;
+			 }
+		 }
+		 player[ccx][ccy] = 6;
 	}
 	 
 	
 	if(IsEditManually){
+		WriteEditManually(winwidth,winheight,fH);
 		SetPenColor("Brown"); 
 		drawLabel(5, winheight/13, "迷宫名称");
 		if( textbox(GenUIID(0), 5+TextStringWidth("迷宫名称"), winheight/13, 3*w, h, MazeName, sizeof(MazeName)) )
@@ -746,6 +782,7 @@ void drawMenu()
 		}
 	}
 	
+	//冒险模式按钮 
 	if(ifAdventureButton){
 		if (button(GenUIID(0), winwidth/2-w, winheight/2 + h*1.2, 2*w, h, "ADVENTURE")){
 			IsAdventuring = TRUE;
@@ -753,9 +790,9 @@ void drawMenu()
 			ifExitbutton = 0;
 			ifAdventureButton = 0;
 			ifListPause = 1;
-			ifListEdit = 1;
-			ifListHelp = 1;
-			ifListView = 1;
+			ifListEdit = 0;
+			ifListHelp = 0;
+			ifListView = 0;
 			ifListSize = 0;
 			ifdrawmaze = 1;
 			IsEditManually = FALSE;
@@ -766,7 +803,27 @@ void drawMenu()
 		}
 	}
 	
-	
+	if(IsDisplayAbout){
+		WriteAbout(winwidth,winheight,fH);
+		if (button(GenUIID(0), winwidth/2-0.5*w, winheight/13, w, h, "Close")){
+			IsDisplayAbout = 0;
+			ifStartbutton = 1;
+			ifExitbutton = 1;
+			ifAdventureButton = 1;
+			ifListPause = 0;
+			ifListEdit = 0;
+			ifListSolve = 0;
+			ifListView = 0;
+			ifListHelp = 1;
+			ifdrawmaze = 0;
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE; 
+			ifLogo = 1;
+			ifInstr = 0;
+			ifInstrButton = 0;
+			;
+		}
+	}
 }
 
 void display()

@@ -24,7 +24,7 @@ HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
 CommandLine=
-Folders=adventure,file_store,lib
+Folders=adventure,file_store,lib,paperwork
 IncludeVersionInfo=0
 SupportXPThemes=0
 <<<<<<< HEAD
@@ -34,7 +34,7 @@ UnitCount=28
 =======
 CompilerSet=1
 CompilerSettings=0000000000000000001000000
-UnitCount=23
+UnitCount=25
 >>>>>>> 095111c815419aa359f4b7d45d2bff7f0cf7c2ab
 
 [VersionInfo]
@@ -287,9 +287,9 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
-FileName=libgraphics\strlib.h
+FileName=paperwork.c
 CompileCpp=0
-Folder=lib
+Folder=paperwork
 Compile=1
 Link=1
 Priority=1000
@@ -297,13 +297,14 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=libgraphics\strlib.o
-Folder=lib
-Compile=0
-Link=0
+FileName=paperwork.h
+Folder=paperwork
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
 [Unit26]
 FileName=simpleGUI\imgui.c
