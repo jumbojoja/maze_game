@@ -70,6 +70,17 @@ static int haveKey = 0;
 static int ifwin = 0;
 static int viewSize = 3;
 static int ClearSolve = 1;
+static int ifStartbutton = 1;
+static int ifExitbutton = 1;
+static int ifListPause = 0;
+static int ifListEdit = 0;
+static int ifListSolve = 0;
+static int ifListHelp = 1; 
+static int ifListView = 0;
+static int ifdrawmaze = 0;
+static int ifLogo = 1;
+static int ifInstr = 0; 
+static int ifInstrButton = 1;
 
  
 // 清屏函数，provided in libgraphics
@@ -78,12 +89,22 @@ void DisplayClear(void);
 // 用户的显示函数
 void display(void);
 
-//像素转英寸函数 
+// 像素转英寸函数 
 double ScaleXInches(int x);
 double ScaleYInches(int y);
 
-//判断鼠标是否在迷宫内函数 
+// 判断鼠标是否在迷宫内函数 
 bool inBox(double x0, double y0, double x1, double x2, double y1, double y2);
+
+// 迷宫生成 
+void CreateMaze(int maze[msize][msize], int x, int y); 
+void mazehelper(int maze[msize][msize], int x, int y); 
+
+// 擦除求解路径
+void clean(int maze[msize][msize]);
+
+// 自动求解
+void Solve(int x, int y, int maze[msize][msize]);
 
 // 用户的键盘事件响应函数
 void KeyboardEventProcess(int key, int event)
@@ -325,7 +346,7 @@ void Main()
     }//输出测试*/
 }
 
-//绘制迷宫 
+// 绘制迷宫 
 void drawmaze(int maze[msize][msize], int x, int y) 
 {
 	int i, j;
@@ -402,6 +423,9 @@ void drawmaze(int maze[msize][msize], int x, int y)
 	}
 }
 
+// 状态转换 
+void change(int i);
+
 // 菜单
 void drawMenu()
 { 
@@ -426,18 +450,6 @@ void drawMenu()
 		"God"};
 	static char * selectedLabel = NULL;
 	
-	static int ifStartbutton = 1;
-	static int ifExitbutton = 1;
-	static int ifListPause = 0;
-	static int ifListEdit = 0;
-	static int ifListSolve = 0;
-	static int ifListHelp = 1; 
-	static int ifListView = 0;
-	static int ifdrawmaze = 0;
-	static int ifLogo = 1;
-	static int ifInstr = 0; 
-	static int ifInstrButton = 1;
-	
 	double fH = GetFontHeight(); //字体高度
 	double x = 0; //fH/8;
 	double y = winheight;
@@ -450,20 +462,7 @@ void drawMenu()
 	// 开始按钮 
 	if (ifStartbutton) {
 		if (button(GenUIID(0), winwidth/2-0.5*w, winheight/2, w, h, "Start")) {
-			ifStartbutton = 0;
-			ifExitbutton = 0;
-			ifListPause = 1;
-			ifListEdit = 1;
-			ifListSolve = 1;
-			ifListView = 1;
-			ifListHelp = 0;
-			ifdrawmaze = 1;
-			IsEditManually = FALSE;
-			IsChoosingMap = FALSE; 
-			ifLogo = 0;
-			ifInstr = 0;
-			ifInstrButton = 0;
-			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
+			change(0);
 		}
 	}
 	
@@ -533,18 +532,7 @@ void drawMenu()
 		 	player[ccx][ccy] = 6;
 		}
 		if( selection==2 ) {	// 退回主菜单 
-			
-			ifStartbutton = 1;
-			ifExitbutton = 1;
-			ifListPause = 0;
-			ifListEdit = 0;
-			ifListSolve = 0;
-			ifListHelp = 1;
-			ifdrawmaze = 0;
-			ifListView = 0;
-			ifLogo = 1;
-			IsEditManually = FALSE;
-			IsChoosingMap = FALSE;
+			change(1);
 		}
 	}
 		
@@ -727,6 +715,43 @@ void drawMenu()
 	
 }
 
+void change(int i) {
+	 switch(i) {
+	 	// 0 - 游戏界面 
+	 	case 0:
+	 		ifStartbutton = 0;
+			ifExitbutton = 0;
+			ifListPause = 1;
+			ifListEdit = 1;
+			ifListSolve = 1;
+			ifListView = 1;
+			ifListHelp = 0;
+			ifdrawmaze = 1;
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE; 
+			ifLogo = 0;
+			ifInstr = 0;
+			ifInstrButton = 0;
+			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
+			break;
+		// 1 - 退回开始菜单 
+		case 1:
+			ifStartbutton = 1;
+			ifExitbutton = 1;
+			ifListPause = 0;
+			ifListEdit = 0;
+			ifListSolve = 0;
+			ifListHelp = 1;
+			ifdrawmaze = 0;
+			ifListView = 0;
+			ifLogo = 1;
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE;
+			break;
+		
+	 }
+}
+
 void display()
 {
 	// 清屏
@@ -741,7 +766,7 @@ bool inBox(double x, double y, double x1, double x2, double y1, double y2)
 	return (x >= x1 && x <= x2 && y >= y1 && y <= y2);
 }
 
-//迷宫生成 
+// 迷宫生成 
 void CreateMaze(int maze[msize][msize], int x, int y) {
 	maze[x][y] = 0;
  	int i, j, k;
@@ -831,7 +856,7 @@ void mazehelper(int maze[msize][msize], int x, int y) {
 	}
 }
 
-//擦除求解路径
+// 擦除求解路径
 void clean(int maze[msize][msize]) {
 	int i, j;
 	for (i = 0; i < msize; ++i) {
@@ -841,7 +866,7 @@ void clean(int maze[msize][msize]) {
 	}
 } 
 
-//自动求解
+// 自动求解
 void Solve(int x, int y, int maze[msize][msize]) {
 	int direction[4][2] = { {0,1},  {1,0}, {0,-1}, {-1,0} };
 	int i, j, flag = 0;
