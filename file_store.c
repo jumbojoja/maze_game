@@ -15,6 +15,7 @@
 #include <ole2.h>
 #include <ocidl.h>
 #include <winuser.h>
+#include <string.h>
 
 #include "imgui.h"
 #include "file_store.h"
@@ -27,6 +28,9 @@ extern bool IsEditManually;
 extern int maze[msize][msize];
 
 extern char MazeName[30];
+
+extern struct EdittedMaze *head;
+extern struct EdittedMaze *p;
 
 int MazeNumber=1;
 
@@ -58,39 +62,65 @@ void StoreMaze()
 		}
 }
 
-struct EdittedMaze *LoadMazeList()
+struct EdittedMaze *LoadMazeList( char str[] )
 {
+	char ch;
+	char temp[30]; 
 	FILE *fp;
 	struct EdittedMaze *head,*p1,*p2;
-	int i,j;
+	int i,j,k=0;
+	int flag=0;
 	
-	if((fp=fopen("Maze_List.txt","r"))==NULL){
+	if((fp=fopen(str,"r"))==NULL){
 		exit(-1);
 	}
 	
-	head=CreateMazeList();
+	head=NULL;
 	p1=NULL;
-	p2=head;
+	p2=NULL;
 	
 	while(!feof(fp)){
 		p1=(struct EdittedMaze*)malloc(sizeof(struct EdittedMaze));
 		
-		fgetc(fp);//读掉换行符
+		ch=fgetc(fp);//读掉换行符
+		if(ch == '\0'||ch == -1){
+			continue;
+		}
+		if(flag){
+			ch=fgetc(fp);
+			if(ch == '\0'||ch == -1){
+				continue;
+			}
+		}//这个是读链表的补丁，千万别删！！！ 
 		 
 		p1->number=MazeNumber;
 		MazeNumber++;//给迷宫编号 
 		
-		fgets(p1->name,30,fp);//读名字 
+		fgets(p1->name,30,fp);
+		/*strcpy(temp,p1->name);
+		for(i=0;temp[i]!='\0'&&temp[i]>=0;i++){
+			p1->name[i]=temp[i];
+		}
+		p1->name[i]='\0';
+		//读名字 */
 		
 		for(i=0;i<msize;i++){
 			for(j=0;j<msize;j++){
 				fscanf(fp,"%d",&p1->Maze[i][j]);
 			}
-		}//读迷宫主体 
+		}//读迷宫主体
 		
-		p2->next=p1;
-		p1->front=p2;
-		p2=p2->next; 
+		fgetc(fp);//读掉末尾换行符 
+		
+		if(head == NULL){
+			head=p1;
+			p2=head;
+		}else{
+			p2->next=p1;
+			p1->front=p2;
+			p2=p2->next;
+		}
+		flag=1;//这个千万别删！ 
 	}
 	
 	p2->next=head;
@@ -99,15 +129,16 @@ struct EdittedMaze *LoadMazeList()
 	return head;
 }
 
-struct EdittedMaze *CreateMazeList()
+/*struct EdittedMaze *CreateMazeList()
 {
 	struct EdittedMaze *head;
 	head=(struct EdittedMaze*)malloc(sizeof(struct EdittedMaze));
 	
-	head->next=head->front=NULL;
+	head->next=NULL; 
+	head->front=NULL;
 	
 	return head;
-}
+}*/
 
 void InsertMaze(struct EdittedMaze *head)
 {
@@ -133,5 +164,45 @@ void InsertMaze(struct EdittedMaze *head)
 	p->front=head->front;
 	p->next=head;
 	head->front=p;
+	
+}
+
+void DeleteMaze(struct EdittedMaze *head)
+{
+	FILE *fp;
+	struct EdittedMaze *p1,*p2;
+	int i,j;
+	
+	if((fp=fopen("Maze_List.txt","w"))==NULL){
+		exit(-1);
+	}
+	
+	p1=p->front;
+	p->next->front=p1;
+	p1->next=p->next;
+	
+	p->front=NULL;
+	p->next=NULL;
+	free(p);
+	p=p1->next;//游戏中的链表操作
+	
+	for(p2=head;p2->number!=head->front->number;p2=p2->next){
+    	fprintf(fp,"\n");
+    	fputs(p2->name,fp);
+    	for(i=0;i<msize;i++){
+    		for(j=0;j<msize;j++){
+    			fprintf(fp,"%d ",p2->Maze[i][j]);
+    		}
+    		fprintf(fp,"\n");
+    	}
+    } 
+	fprintf(fp,"\n");
+    fputs(p2->name,fp);
+    for(i=0;i<msize;i++){
+    	for(j=0;j<msize;j++){
+    		fprintf(fp,"%d ",p2->Maze[i][j]);
+    	}
+    	fprintf(fp,"\n");
+    }
 	
 }

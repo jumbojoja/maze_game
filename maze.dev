@@ -24,7 +24,7 @@ HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
 CommandLine=
-Folders=lib
+Folders=adventure,file_store,lib,paperwork
 IncludeVersionInfo=0
 SupportXPThemes=0
 <<<<<<< HEAD
@@ -34,7 +34,11 @@ UnitCount=28
 =======
 CompilerSet=1
 CompilerSettings=0000000000000000001000000
+<<<<<<< HEAD
 UnitCount=24
+=======
+UnitCount=25
+>>>>>>> c1557b7354f4818606fa4690ab8eba669f54d996
 >>>>>>> 095111c815419aa359f4b7d45d2bff7f0cf7c2ab
 
 [VersionInfo]
@@ -259,7 +263,7 @@ BuildCmd=
 [Unit21]
 FileName=file_store.c
 CompileCpp=0
-Folder=
+Folder=file_store
 Compile=1
 Link=1
 Priority=1000
@@ -268,7 +272,7 @@ BuildCmd=
 
 [Unit22]
 FileName=file_store.h
-Folder=maze
+Folder=file_store
 Compile=1
 Link=1
 Priority=1000
@@ -277,9 +281,15 @@ BuildCmd=
 CompileCpp=0
 
 [Unit23]
+<<<<<<< HEAD
 FileName=drawn.c
 CompileCpp=0
 Folder=
+=======
+FileName=adventure.c
+CompileCpp=0
+Folder=adventure
+>>>>>>> c1557b7354f4818606fa4690ab8eba669f54d996
 Compile=1
 Link=1
 Priority=1000
@@ -287,9 +297,15 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
+<<<<<<< HEAD
 FileName=drawn.h
 CompileCpp=0
 Folder=
+=======
+FileName=paperwork.c
+CompileCpp=0
+Folder=paperwork
+>>>>>>> c1557b7354f4818606fa4690ab8eba669f54d996
 Compile=1
 Link=1
 Priority=1000
@@ -297,13 +313,14 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=libgraphics\strlib.o
-Folder=lib
-Compile=0
-Link=0
+FileName=paperwork.h
+Folder=paperwork
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
 [Unit26]
 FileName=simpleGUI\imgui.c

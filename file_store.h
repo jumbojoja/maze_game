@@ -14,10 +14,10 @@ void StoreMaze(void);
 
 //用于加载MAZE的函数，每次打开游戏时调用，将已经保存的MAZE保存为一个链表
 //返回值:头结点指针 
-struct EdittedMaze *LoadMazeList(void);
+struct EdittedMaze *LoadMazeList(char str[]);
 
-//用于删除结点的函数。还未实现 
-void DeleteMaze(void);
+//用于删除结点的函数。
+void DeleteMaze(struct EdittedMaze *head);
 
 //创建链表函数，文件开始时调用，创建一个双向链表
 //返回值:一个类型为struct EdittedMaze* 的链表头指针 
