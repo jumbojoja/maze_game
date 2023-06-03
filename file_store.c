@@ -15,6 +15,7 @@
 #include <ole2.h>
 #include <ocidl.h>
 #include <winuser.h>
+#include <string.h>
 
 #include "imgui.h"
 #include "file_store.h"
@@ -64,6 +65,7 @@ void StoreMaze()
 struct EdittedMaze *LoadMazeList( char str[] )
 {
 	char ch;
+	char temp[30]; 
 	FILE *fp;
 	struct EdittedMaze *head,*p1,*p2;
 	int i,j,k=0;
@@ -94,7 +96,13 @@ struct EdittedMaze *LoadMazeList( char str[] )
 		p1->number=MazeNumber;
 		MazeNumber++;//¸øÃÔ¹¬±àºÅ 
 		
-		fgets(p1->name,30,fp);//¶ÁÃû×Ö 
+		fgets(p1->name,30,fp);
+		/*strcpy(temp,p1->name);
+		for(i=0;temp[i]!='\0'&&temp[i]>=0;i++){
+			p1->name[i]=temp[i];
+		}
+		p1->name[i]='\0';
+		//¶ÁÃû×Ö */
 		
 		for(i=0;i<msize;i++){
 			for(j=0;j<msize;j++){
@@ -188,6 +196,13 @@ void DeleteMaze(struct EdittedMaze *head)
     		fprintf(fp,"\n");
     	}
     } 
-	
+	fprintf(fp,"\n");
+    fputs(p2->name,fp);
+    for(i=0;i<msize;i++){
+    	for(j=0;j<msize;j++){
+    		fprintf(fp,"%d ",p2->Maze[i][j]);
+    	}
+    	fprintf(fp,"\n");
+    }
 	
 }

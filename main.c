@@ -22,7 +22,7 @@
 #include "paperwork.h"
 
 #define msize 20
-#define length 0.25
+#define length 0.35
 
 static int Rank = 1;
 static int FLAG = 0;	//迷宫是否有解 
@@ -74,6 +74,17 @@ static int haveKey = 0;
 static int ifwin = 0;
 int viewSize = 3; //这里我把这个视野静态取消了，因为我在剧情里面需要调视野 by LWJ 
 static int ClearSolve = 1;
+static int ifStartbutton = 1;
+static int ifExitbutton = 1;
+static int ifListPause = 0;
+static int ifListEdit = 0;
+static int ifListSolve = 0;
+static int ifListHelp = 1; 
+static int ifListView = 0;
+static int ifdrawmaze = 0;
+static int ifLogo = 1;
+static int ifInstr = 0; 
+static int ifInstrButton = 1;
 
  
 // 清屏函数，provided in libgraphics
@@ -82,18 +93,22 @@ void DisplayClear(void);
 // 用户的显示函数
 void display(void);
 
-//像素转英寸函数 
+// 像素转英寸函数 
 double ScaleXInches(int x);
 double ScaleYInches(int y);
 
-//判断鼠标是否在迷宫内函数 
+// 判断鼠标是否在迷宫内函数 
 bool inBox(double x0, double y0, double x1, double x2, double y1, double y2);
 
-//写指南函数 
-void WriteInstructions(double winwidth, double winheight, double w, double fH);
+// 迷宫生成 
+void CreateMaze(int maze[msize][msize], int x, int y); 
+void mazehelper(int maze[msize][msize], int x, int y); 
 
-//写关于函数 
-void WriteAbout(double winwidth, double winheight, double fH);
+// 擦除求解路径
+void clean(int maze[msize][msize]);
+
+// 自动求解
+void Solve(int x, int y, int maze[msize][msize]);
 
 // 用户的键盘事件响应函数
 void KeyboardEventProcess(int key, int event)
@@ -300,9 +315,7 @@ void Main()
 	
 	// 初始化窗口和图形系统
 	SetWindowTitle("CMAZE!");
-	//SetWindowSize(10, 10); // 单位 - 英寸
-	//SetWindowSize(20, 10);
-	//SetWindowSize(10, 20);  // 如果屏幕尺寸不够，则按比例缩小
+	SetWindowSize(17, 10);
     InitGraphics();
 
 	// 获得窗口尺寸
@@ -336,7 +349,7 @@ void Main()
     }//输出测试*/
 }
 
-//绘制迷宫 
+// 绘制迷宫 
 void drawmaze(int maze[msize][msize], int x, int y) 
 {
 	int i, j;
@@ -413,6 +426,9 @@ void drawmaze(int maze[msize][msize], int x, int y)
 	}
 }
 
+// 状态转换 
+void change(int i);
+
 // 菜单
 void drawMenu()
 { 
@@ -437,6 +453,7 @@ void drawMenu()
 		"God"};
 	static char * selectedLabel = NULL;
 	
+
 	static int ifStartbutton = 1;
 	static int ifExitbutton = 1;
 	static int ifAdventureButton = 1;
@@ -452,6 +469,7 @@ void drawMenu()
 	static int ifInstrButton = 1;
 	static int IsDisplayAbout = 0;
 	
+
 	double fH = GetFontHeight(); //字体高度
 	double x = 0; //fH/8;
 	double y = winheight;
@@ -479,6 +497,9 @@ void drawMenu()
 			ifInstr = 0;
 			ifInstrButton = 0;
 			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
+			
+			change(0);
+
 		}
 	}
 	
@@ -546,6 +567,7 @@ void drawMenu()
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE;
 			IsAdventuring = FALSE;
+			change(1);
 		}
 	}
 		
@@ -672,7 +694,7 @@ void drawMenu()
 
 	
 	if(IsEditManually){
-		if (button(GenUIID(0), 3, winheight/13, w, h, "Save")){
+		if (button(GenUIID(0), 6, winheight/13, w, h, "Save")){
 			IsEditManually = FALSE;
 			StoreMaze();
 			InsertMaze(head);
@@ -747,15 +769,14 @@ void drawMenu()
 	if(IsEditManually){
 		WriteEditManually(winwidth,winheight,fH);
 		SetPenColor("Brown"); 
-		drawLabel(5, winheight/13, "迷宫名称");
-		if( textbox(GenUIID(0), 5+TextStringWidth("迷宫名称"), winheight/13, 3*w, h, MazeName, sizeof(MazeName)) )
-		;
+		drawLabel(8, winheight/13, "迷宫名称");
+		if( textbox(GenUIID(0), 8+TextStringWidth("迷宫名称"), winheight/13, 3*w, h, MazeName, sizeof(MazeName)) );
 	}//新增迷宫名称文本框
 	
 	if(IsChoosingMap){
 		viewSize = 100; 
 		drawLabel(1,winheight/2,p->name);
-		if (button(GenUIID(0), 3, winheight/13, w, h, "NEXT")){
+		if (button(GenUIID(0), 6, winheight/13, w, h, "NEXT")){
 			p=p->next;
 			int i,j;
 			for(i=0;i<msize;i++){
@@ -764,7 +785,7 @@ void drawMenu()
 				}
 			}
 		}
-		if (button(GenUIID(0), 5, winheight/13, w, h, "FRONT")){
+		if (button(GenUIID(0), 8, winheight/13, w, h, "FRONT")){
 			p=p->front;
 			int i,j;
 			for(i=0;i<msize;i++){
@@ -773,7 +794,7 @@ void drawMenu()
 				}
 			}
 		}
-		if (button(GenUIID(0), 7, winheight/13, w, h, "DELETE")){
+		if (button(GenUIID(0), 10, winheight/13, w, h, "DELETE")){
 			DeleteMaze(head);
 		}
 		if (button(GenUIID(0), 1, winheight/2 - 1.2*h , w, h, "Play")){
@@ -826,6 +847,43 @@ void drawMenu()
 	}
 }
 
+void change(int i) {
+	 switch(i) {
+	 	// 0 - 游戏界面 
+	 	case 0:
+	 		ifStartbutton = 0;
+			ifExitbutton = 0;
+			ifListPause = 1;
+			ifListEdit = 1;
+			ifListSolve = 1;
+			ifListView = 1;
+			ifListHelp = 0;
+			ifdrawmaze = 1;
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE; 
+			ifLogo = 0;
+			ifInstr = 0;
+			ifInstrButton = 0;
+			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
+			break;
+		// 1 - 退回开始菜单 
+		case 1:
+			ifStartbutton = 1;
+			ifExitbutton = 1;
+			ifListPause = 0;
+			ifListEdit = 0;
+			ifListSolve = 0;
+			ifListHelp = 1;
+			ifdrawmaze = 0;
+			ifListView = 0;
+			ifLogo = 1;
+			IsEditManually = FALSE;
+			IsChoosingMap = FALSE;
+			break;
+		
+	 }
+}
+
 void display()
 {
 	// 清屏
@@ -840,7 +898,7 @@ bool inBox(double x, double y, double x1, double x2, double y1, double y2)
 	return (x >= x1 && x <= x2 && y >= y1 && y <= y2);
 }
 
-//迷宫生成 
+// 迷宫生成 
 void CreateMaze(int maze[msize][msize], int x, int y) {
 	maze[x][y] = 0;
  	int i, j, k;
@@ -930,7 +988,7 @@ void mazehelper(int maze[msize][msize], int x, int y) {
 	}
 }
 
-//擦除求解路径
+// 擦除求解路径
 void clean(int maze[msize][msize]) {
 	int i, j;
 	for (i = 0; i < msize; ++i) {
@@ -940,7 +998,7 @@ void clean(int maze[msize][msize]) {
 	}
 } 
 
-//自动求解
+// 自动求解
 void Solve(int x, int y, int maze[msize][msize]) {
 	int direction[4][2] = { {0,1},  {1,0}, {0,-1}, {-1,0} };
 	int i, j, flag = 0;
