@@ -21,7 +21,7 @@
 #include "file_store.h"
 
 #define msize 20
-#define length 0.25
+#define length 0.35
 
 static int Rank = 1;
 static int FLAG = 0;	//迷宫是否有解 
@@ -311,9 +311,7 @@ void Main()
 	
 	// 初始化窗口和图形系统
 	SetWindowTitle("CMAZE!");
-	//SetWindowSize(10, 10); // 单位 - 英寸
-	//SetWindowSize(20, 10);
-	//SetWindowSize(10, 20);  // 如果屏幕尺寸不够，则按比例缩小
+	SetWindowSize(17, 10);
     InitGraphics();
 
 	// 获得窗口尺寸
@@ -633,7 +631,7 @@ void drawMenu()
 
 	
 	if(IsEditManually){
-		if (button(GenUIID(0), 3, winheight/13, w, h, "Save")){
+		if (button(GenUIID(0), 6, winheight/13, w, h, "Save")){
 			IsEditManually = FALSE;
 			StoreMaze();
 			InsertMaze(head);
@@ -681,15 +679,14 @@ void drawMenu()
 	
 	if(IsEditManually){
 		SetPenColor("Brown"); 
-		drawLabel(5, winheight/13, "迷宫名称");
-		if( textbox(GenUIID(0), 5+TextStringWidth("迷宫名称"), winheight/13, 3*w, h, MazeName, sizeof(MazeName)) )
-		;
+		drawLabel(8, winheight/13, "迷宫名称");
+		if( textbox(GenUIID(0), 8+TextStringWidth("迷宫名称"), winheight/13, 3*w, h, MazeName, sizeof(MazeName)) );
 	}//新增迷宫名称文本框
 	
 	if(IsChoosingMap){
 		viewSize = 100; 
 		drawLabel(1,winheight/2,p->name);
-		if (button(GenUIID(0), 3, winheight/13, w, h, "NEXT")){
+		if (button(GenUIID(0), 6, winheight/13, w, h, "NEXT")){
 			p=p->next;
 			int i,j;
 			for(i=0;i<msize;i++){
@@ -698,7 +695,7 @@ void drawMenu()
 				}
 			}
 		}
-		if (button(GenUIID(0), 5, winheight/13, w, h, "FRONT")){
+		if (button(GenUIID(0), 8, winheight/13, w, h, "FRONT")){
 			p=p->front;
 			int i,j;
 			for(i=0;i<msize;i++){
@@ -707,7 +704,7 @@ void drawMenu()
 				}
 			}
 		}
-		if (button(GenUIID(0), 7, winheight/13, w, h, "DELETE")){
+		if (button(GenUIID(0), 10, winheight/13, w, h, "DELETE")){
 			DeleteMaze(head);
 		}
 	}
