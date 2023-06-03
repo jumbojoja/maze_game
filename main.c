@@ -19,9 +19,10 @@
 
 #include "imgui.h"
 #include "file_store.h"
+#include "drawn.h"
 
 #define msize 20
-#define length 0.25
+#define length 0.5
 
 static int Rank = 1;
 static int FLAG = 0;	//迷宫是否有解 
@@ -288,7 +289,12 @@ void Main()
 	//SetWindowSize(20, 10);
 	//SetWindowSize(10, 20);  // 如果屏幕尺寸不够，则按比例缩小
     InitGraphics();
-
+    //设置所需颜色
+	DefineColor("face", 0.96, 0.96, 0.011);
+	DefineColor("facialContour", 0.83, 0.54, 0.15);
+	DefineColor("mouth", 0.69, 0.42, 0.28);
+	DefineColor("brick", 0.54, 0.54, 0.44);
+	DefineColor("brickJoint", 0.44, 0.41, 0.56);
 	// 获得窗口尺寸
     winwidth = GetWindowWidth();
     winheight = GetWindowHeight();
@@ -319,6 +325,10 @@ void Main()
     }//输出测试 */
 }
 
+//char face[10] ;
+//char facialContour[10];
+//char mouth[10]; 
+
 //绘制迷宫 
 void drawmaze(int maze[msize][msize], int x, int y) 
 {
@@ -327,19 +337,23 @@ void drawmaze(int maze[msize][msize], int x, int y)
 	for (i = 0; i < msize; i++) {
 		for (j = 0; j < msize; j++) {
 			if ((maze[i][j] == 0 || maze[i][j] == -3) && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
+				SetPenColor("brickJoint");
 				MovePen(x + length*j,y - length*i);
 				DrawLine(length,0);
 				DrawLine(0,-1.0*length);
 				DrawLine(-1.0*length,0);
 				DrawLine(0,length);
-			} else if (maze[i][j] == 1 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
-				MovePen(x + length*j,y - length*i);
+				SetPenColor("Red");
+			}
+				if (maze[i][j] == 1 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
+				drawwall(x, y, i, j);
+				/*MovePen(x + length*j,y - length*i);
 				StartFilledRegion(1); 
 					DrawLine(length,0);
 					DrawLine(0,-1.0*length);
 					DrawLine(-1.0*length,0);
 					DrawLine(0,length);
-					EndFilledRegion(); 	
+					EndFilledRegion(); */	
 				}else if (maze[i][j] == 2) {
 					MovePen(x + length*j,y - length*i);
 					StartFilledRegion(1); 
@@ -382,15 +396,7 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					SetPenColor("Red");
 				}
 				if(player[i][j] == 6){
-					MovePen(x + length*j,y - length*i);
-					SetPenColor("Black");
-					StartFilledRegion(1); 
-					DrawLine(length,0);
-					DrawLine(0,-1.0*length);
-					DrawLine(-1.0*length,0);
-					DrawLine(0,length);
-					EndFilledRegion(); 	
-					SetPenColor("Red");
+					drawplayer(x, y, i, j);
 				}
 		}
 	}
