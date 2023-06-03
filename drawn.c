@@ -18,7 +18,7 @@
 
 #include "imgui.h"
 #include "drawn.h"
-#define length 0.5
+#define length 0.35
 #define msize 20
 
 //»­Íæ¼Ò

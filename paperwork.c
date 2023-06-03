@@ -23,7 +23,7 @@
 #include "paperwork.h"
 
 #define msize 20
-#define length 0.25
+#define length 0.35
 
 void WriteInstructions(double winwidth, double winheight, double w, double fH)
 {

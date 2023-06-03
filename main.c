@@ -79,17 +79,6 @@ static int haveKey = 0;
 static int ifwin = 0;
 int viewSize = 3; //这里我把这个视野静态取消了，因为我在剧情里面需要调视野 by LWJ 
 static int ClearSolve = 1;
-static int ifStartbutton = 1;
-static int ifExitbutton = 1;
-static int ifListPause = 0;
-static int ifListEdit = 0;
-static int ifListSolve = 0;
-static int ifListHelp = 1; 
-static int ifListView = 0;
-static int ifdrawmaze = 0;
-static int ifLogo = 1;
-static int ifInstr = 0; 
-static int ifInstrButton = 1;
 
  
 // 清屏函数，provided in libgraphics
@@ -432,9 +421,6 @@ void drawmaze(int maze[msize][msize], int x, int y)
 	}
 }
 
-// 状态转换 
-void change(int i);
-
 // 菜单
 void drawMenu()
 { 
@@ -503,8 +489,6 @@ void drawMenu()
 			ifInstr = 0;
 			ifInstrButton = 0;
 			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
-			
-			change(0);
 
 		}
 	}
@@ -573,7 +557,6 @@ void drawMenu()
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE;
 			IsAdventuring = FALSE;
-			change(1);
 		}
 	}
 		
@@ -853,42 +836,6 @@ void drawMenu()
 	}
 }
 
-void change(int i) {
-	 switch(i) {
-	 	// 0 - 游戏界面 
-	 	case 0:
-	 		ifStartbutton = 0;
-			ifExitbutton = 0;
-			ifListPause = 1;
-			ifListEdit = 1;
-			ifListSolve = 1;
-			ifListView = 1;
-			ifListHelp = 0;
-			ifdrawmaze = 1;
-			IsEditManually = FALSE;
-			IsChoosingMap = FALSE; 
-			ifLogo = 0;
-			ifInstr = 0;
-			ifInstrButton = 0;
-			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
-			break;
-		// 1 - 退回开始菜单 
-		case 1:
-			ifStartbutton = 1;
-			ifExitbutton = 1;
-			ifListPause = 0;
-			ifListEdit = 0;
-			ifListSolve = 0;
-			ifListHelp = 1;
-			ifdrawmaze = 0;
-			ifListView = 0;
-			ifLogo = 1;
-			IsEditManually = FALSE;
-			IsChoosingMap = FALSE;
-			break;
-		
-	 }
-}
 
 void display()
 {
