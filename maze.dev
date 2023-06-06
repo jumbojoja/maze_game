@@ -34,7 +34,7 @@ UnitCount=28
 =======
 CompilerSet=1
 CompilerSettings=0000000000000000001000000
-UnitCount=25
+UnitCount=26
 >>>>>>> 095111c815419aa359f4b7d45d2bff7f0cf7c2ab
 
 [VersionInfo]
@@ -57,16 +57,6 @@ AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit1]
-FileName=main.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit2]
 FileName=libgraphics\boolean.h
 CompileCpp=0
 Folder=lib
@@ -76,7 +66,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit3]
+[Unit2]
 FileName=libgraphics\exceptio.c
 CompileCpp=0
 Folder=lib
@@ -86,8 +76,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit4]
+[Unit3]
 FileName=libgraphics\exception.h
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit4]
+FileName=libgraphics\extgraph.h
 Folder=lib
 Compile=1
 Link=1
@@ -97,16 +97,6 @@ BuildCmd=
 CompileCpp=0
 
 [Unit5]
-FileName=libgraphics\extgraph.h
-CompileCpp=0
-Folder=lib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit6]
 FileName=libgraphics\gcalloc.h
 CompileCpp=0
 Folder=lib
@@ -116,7 +106,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit7]
+[Unit6]
 FileName=libgraphics\genlib.c
 CompileCpp=0
 Folder=lib
@@ -126,7 +116,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit8]
+[Unit7]
 FileName=libgraphics\genlib.h
 CompileCpp=0
 Folder=lib
@@ -136,7 +126,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit9]
+[Unit8]
 FileName=libgraphics\graphics.c
 CompileCpp=0
 Folder=lib
@@ -146,8 +136,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit10]
+[Unit9]
 FileName=libgraphics\graphics.h
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit10]
+FileName=libgraphics\linkedlist.c
 Folder=lib
 Compile=1
 Link=1
@@ -157,16 +157,6 @@ BuildCmd=
 CompileCpp=0
 
 [Unit11]
-FileName=libgraphics\linkedlist.c
-CompileCpp=0
-Folder=lib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit12]
 FileName=libgraphics\linkedlist.h
 CompileCpp=0
 Folder=lib
@@ -176,8 +166,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit13]
+[Unit12]
 FileName=libgraphics\random.c
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit13]
+FileName=libgraphics\random.h
 Folder=lib
 Compile=1
 Link=1
@@ -187,16 +187,6 @@ BuildCmd=
 CompileCpp=0
 
 [Unit14]
-FileName=libgraphics\random.h
-CompileCpp=0
-Folder=lib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit15]
 FileName=libgraphics\simpio.c
 CompileCpp=0
 Folder=lib
@@ -206,8 +196,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
+[Unit15]
 FileName=libgraphics\simpio.h
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit16]
+FileName=libgraphics\strlib.c
 Folder=lib
 Compile=1
 Link=1
@@ -217,16 +217,6 @@ BuildCmd=
 CompileCpp=0
 
 [Unit17]
-FileName=libgraphics\strlib.c
-CompileCpp=0
-Folder=lib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit18]
 FileName=libgraphics\strlib.h
 CompileCpp=0
 Folder=lib
@@ -236,8 +226,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit19]
+[Unit18]
 FileName=simpleGUI\imgui.c
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit19]
+FileName=simpleGUI\imgui.h
 Folder=lib
 Compile=1
 Link=1
@@ -247,9 +247,9 @@ BuildCmd=
 CompileCpp=0
 
 [Unit20]
-FileName=simpleGUI\imgui.h
+FileName=code\adventure.c
 CompileCpp=0
-Folder=lib
+Folder=adventure
 Compile=1
 Link=1
 Priority=1000
@@ -257,7 +257,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=file_store.c
+FileName=code\file_store.c
 CompileCpp=0
 Folder=file_store
 Compile=1
@@ -267,7 +267,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit22]
-FileName=file_store.h
+FileName=code\file_store.h
 Folder=file_store
 Compile=1
 Link=1
@@ -277,9 +277,9 @@ BuildCmd=
 CompileCpp=0
 
 [Unit23]
-FileName=adventure.c
+FileName=code\paperwork.c
 CompileCpp=0
-Folder=adventure
+Folder=paperwork
 Compile=1
 Link=1
 Priority=1000
@@ -287,7 +287,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
-FileName=paperwork.c
+FileName=code\paperwork.h
 CompileCpp=0
 Folder=paperwork
 Compile=1
@@ -297,8 +297,8 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=paperwork.h
-Folder=paperwork
+FileName=code\main.c
+Folder=
 Compile=1
 Link=1
 Priority=1000
@@ -307,9 +307,9 @@ BuildCmd=
 CompileCpp=0
 
 [Unit26]
-FileName=simpleGUI\imgui.c
+FileName=code\adventure.h
 CompileCpp=0
-Folder=lib
+Folder=adventure
 Compile=1
 Link=1
 Priority=1000
