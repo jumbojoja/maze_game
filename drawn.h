@@ -7,5 +7,9 @@ void drawwall(int x, int y, int i, int j);
 //»­Íæ¼Ò
 void drawplayer(int x, int y, int i, int j);
 
+//»­Ô¿³×
+void drawkey(int x, int y, int i, int j); 
 
+//»­Ëø
+void drawlock(int x, int y, int i, int j); 
 #endif

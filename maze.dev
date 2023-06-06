@@ -24,7 +24,7 @@ HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
 CommandLine=
-Folders=adventure,file_store,lib,paperwork
+Folders=adventure,drawn,file_store,lib,paperwork
 IncludeVersionInfo=0
 SupportXPThemes=0
 <<<<<<< HEAD
@@ -342,15 +342,6 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit28]
-FileName=simpleGUI\imgui.o
-Folder=lib
-Compile=0
-Link=0
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit30]
 FileName=file_store.h
 CompileCpp=0
@@ -361,10 +352,20 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
-FileName=file_store.c
+[Unit28]
+FileName=..\drawn.h
 CompileCpp=0
-Folder=
+Folder=drawn
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit29]
+FileName=..\drawn.c
+CompileCpp=0
+Folder=drawn
 Compile=1
 Link=1
 Priority=1000

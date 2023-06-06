@@ -18,7 +18,7 @@
 
 #include "imgui.h"
 #include "drawn.h"
-#define length 0.35
+#define length 0.5
 #define msize 20
 
 //»­Íæ¼Ò
@@ -163,3 +163,61 @@ void drawwall(int x, int y, int i, int j)
 	SetPenColor("Red");
 }
 
+//»­Ô¿³×
+void drawkey(int x, int y, int i, int j)
+{
+	MovePen(x + length*j + 0.66*length, y - length*i - 0.34*length);
+	SetPenColor("keyUpper");
+	StartFilledRegion(1);
+	DrawArc(0.11*length, 225, -180);
+	DrawLine(length/17.0, length/17.0);
+	DrawArc(0.19*length, 45, 157);
+	DrawLine(-0.39*length, -0.39*length);
+	DrawLine(0, -0.13*length);
+	DrawLine(0.635*length, 0.635*length);
+	EndFilledRegion();
+	
+	MovePen(x + length*j + 0.66*length, y - length*i - 0.34*length);
+	SetPenColor("kryLower");
+	StartFilledRegion(1);
+	DrawArc(0.11*length, 225, 180);
+	DrawLine(length/17.0, length/17.0);
+	DrawArc(0.19*length, 45, -157);
+	DrawLine(-0.13*length, -0.13*length);
+	DrawLine(0, -0.0706*length);
+	DrawLine(-0.0706*length, 0);
+	DrawLine(0, -0.0706*length);
+	DrawLine(-0.0706*length, 0);
+	DrawLine(0.635*length, 0.635*length);
+	EndFilledRegion();
+}
+
+//»­Ëø
+void drawlock(int x, int y, int i, int j)
+{
+	MovePen(x + length*j + 0.66*length, y - length*i - 0.34*length);
+	SetPenColor("lock");
+	StartFilledRegion(1);
+	DrawLine(length,0);
+	DrawLine(0,-1.0*length);
+	DrawLine(-1.0*length,0);
+	DrawLine(0,length);
+	EndFilledRegion();
+	
+	MovePen(x + length * j + 0.247*length, y - length*i - 0.447*length);
+	SetPenColor("White");
+	StartFilledRegion(1);
+	DrawLine(0, -0.39*length);
+	DrawLine(0.506*length, 0);
+	DrawLine(0, 0.39*length);
+	DrawLine(-0.506*length, 0);
+	EndFilledRegion();
+	
+	MovePen(x + length*j + 0.73*length, y - length*i - 0.42*length);
+	StartFilledRegion(1);
+	DrawArc(0.23*length, 0, 180);
+	DrawLine(0.11*length, 0);
+	DrawArc(0.12*length, 180, -180);
+	DrawLine(0, 0.11*length);
+	EndFilledRegion();
+ } 

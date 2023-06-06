@@ -19,7 +19,6 @@
 
 #include "imgui.h"
 #include "file_store.h"
-
 #include "drawn.h"
 
 #define msize 20
@@ -28,7 +27,6 @@
 #include "paperwork.h"
 
 #define msize 20
-#define length 0.35
 static int Rank = 1;
 static int FLAG = 0;	//迷宫是否有解 
 static double winwidth, winheight;   // 窗口尺寸
@@ -317,6 +315,9 @@ void Main()
 	DefineColor("mouth", 0.69, 0.42, 0.28);
 	DefineColor("brick", 0.54, 0.54, 0.44);
 	DefineColor("brickJoint", 0.44, 0.41, 0.56);
+	DefineColor("keyUpper", 0.86, 0.86, 0.11);
+	DefineColor("keyLower", 0.93, 0.93, 0.04);
+	DefineColor("lock", 0.88, 0.81, 0.09);
 	// 获得窗口尺寸
     winwidth = GetWindowWidth();
     winheight = GetWindowHeight();
@@ -384,7 +385,8 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					EndFilledRegion();
 					SetPenColor("Red");
 				}else if (maze[i][j] == 3) {
-					MovePen(x + length*j,y - length*i);
+					drawlock(x, y, i, j); 
+					/*MovePen(x + length*j,y - length*i);
 					StartFilledRegion(1); 
 					SetPenColor("Orange");
 					DrawLine(length,0);
@@ -392,7 +394,7 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					DrawLine(-1.0*length,0);
 					DrawLine(0,length);
 					EndFilledRegion();
-					SetPenColor("Red");
+					SetPenColor("Red");*/
 				}else if (maze[i][j] == -1) {
 					MovePen(x + length*j,y - length*i);
 					StartFilledRegion(1); 
@@ -413,6 +415,8 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					DrawLine(0,length);
 					EndFilledRegion();
 					SetPenColor("Red");
+				}else if(maze[i][j] == 4 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize){
+					drawkey(x, y, i, j);
 				}
 				if(player[i][j] == 6){
 					drawplayer(x, y, i, j);
@@ -712,8 +716,18 @@ void drawMenu()
 	if(ifwin&&!IsAdventuring){
 		int i, j; 
 		DisplayClear();
-		MovePen(winwidth/2 - TextStringWidth("You win!"), winheight/2);
-		DrawTextString("You win!");
+		MovePen(winwidth/2-w*3, winheight/2+h*7);
+		DrawTextString("888   888        &&&      &&&        88888888        &&&     &&&     &&&      &&      &&88     &&");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-fH);
+		DrawTextString(" &&& &&&         &&&      &&&       888    888       &&&    && &&    &&&      ..      88 88    88");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-2*fH);
+		DrawTextString("  &&&&&          &&&      &&&      888      888       &&&  &&   &&  &&&       88      88  88   88");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-3*fH);
+		DrawTextString("   &&&           &&&      &&&      888      888       &&& &&     && &&&       88      88   88  88");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-4*fH);
+		DrawTextString("   &&&            &&&&  &&&&        888    888         &&&&       &&&&        88      88    88 88");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-5*fH);
+		DrawTextString("   &&&             &&&&&&&&          88888888           &&         &&         88      88     8888");
 		ifwin = 0;
 		mazehelper(maze,2,2);
 		ccx = 2;
