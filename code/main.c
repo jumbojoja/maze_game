@@ -537,6 +537,18 @@ void drawMenu() {
 			IsChoosingMap = FALSE;
 			IsAdventuring = FALSE;
 			
+			int i, j;
+			clean(maze);
+			for (i = 0; i < msize; ++i) {
+		 		for (j = 0; j < msize; ++j) {
+		 			player[i][j] = 0;
+			 	}
+		 	}
+		 	ccx = 2;
+		 	ccy = 2;
+		 	player[ccx][ccy] = 6;
+		 	haveKey = 0;
+			
 		}
 	}
 		
