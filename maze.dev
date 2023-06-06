@@ -322,20 +322,10 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=0
 
-[Unit26]
-FileName=drawn.c
-CompileCpp=0
-Folder=lib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit27]
 FileName=drawn.h
 CompileCpp=0
-Folder=lib
+Folder=drawn
 Compile=1
 Link=1
 Priority=1000
@@ -364,6 +354,16 @@ BuildCmd=
 
 [Unit29]
 FileName=..\drawn.c
+CompileCpp=0
+Folder=drawn
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit26]
+FileName=drawn.c
 CompileCpp=0
 Folder=drawn
 Compile=1

@@ -170,32 +170,44 @@ void drawkey(int x, int y, int i, int j)
 	SetPenColor("keyUpper");
 	StartFilledRegion(1);
 	DrawArc(0.11*length, 225, -180);
-	DrawLine(length/17.0, length/17.0);
-	DrawArc(0.19*length, 45, 157);
-	DrawLine(-0.39*length, -0.39*length);
-	DrawLine(0, -0.13*length);
-	DrawLine(0.635*length, 0.635*length);
+	DrawLine(0.06*length, 0.06*length);
+	DrawArc(0.29*length, 45, 180);
+	DrawLine(0.20*length, 0.20*length);
 	EndFilledRegion();
 	
+	MovePen(x + length*j + 0.5*length, y - length*i - 0.5*length);
+	StartFilledRegion(1);
+	DrawLine(-0.06*length, 0.06*length);
+	DrawLine(-0.32*length, -0.32*length);
+	DrawLine(0, -0.12*length);
+	DrawLine(0.48*length, 0.48*length);
+	EndFilledRegion();
+	
+	SetPenColor("keyLower");
 	MovePen(x + length*j + 0.66*length, y - length*i - 0.34*length);
-	SetPenColor("kryLower");
 	StartFilledRegion(1);
 	DrawArc(0.11*length, 225, 180);
-	DrawLine(length/17.0, length/17.0);
-	DrawArc(0.19*length, 45, -157);
-	DrawLine(-0.13*length, -0.13*length);
-	DrawLine(0, -0.0706*length);
-	DrawLine(-0.0706*length, 0);
-	DrawLine(0, -0.0706*length);
-	DrawLine(-0.0706*length, 0);
-	DrawLine(0.635*length, 0.635*length);
+	DrawLine(0.06*length, 0.06*length);
+	DrawArc(0.29*length, 45, -180);
+	DrawLine(0.20*length, 0.20*length);
 	EndFilledRegion();
+	
+	MovePen(x + length*j + 0.5*length, y - length*i - 0.5*length);
+	StartFilledRegion(1);
+	DrawLine(0.04*length, -0.04*length);
+	DrawLine(-0.16*length, -0.16*length);
+	DrawLine(0, -0.07*length);
+	DrawLine(-0.07*length, 0);
+	DrawLine(0, -0.07*length);
+	DrawLine(-0.15*length, 0);
+	EndFilledRegion();
+	SetPenColor("Red");
 }
 
 //»­Ëø
 void drawlock(int x, int y, int i, int j)
 {
-	MovePen(x + length*j + 0.66*length, y - length*i - 0.34*length);
+	MovePen(x + length*j, y - length*i);
 	SetPenColor("lock");
 	StartFilledRegion(1);
 	DrawLine(length,0);
@@ -213,11 +225,24 @@ void drawlock(int x, int y, int i, int j)
 	DrawLine(-0.506*length, 0);
 	EndFilledRegion();
 	
-	MovePen(x + length*j + 0.73*length, y - length*i - 0.42*length);
+	MovePen(x + length*j + 0.73*length, y - length*i - 0.4*length);
+	SetPenSize(3);
+	DrawArc(0.22*length, 0, 180);
+	SetPenSize(1);
+	
+	MovePen(x + length*j + 0.5*length, y - length*i - 0.5*length);
 	StartFilledRegion(1);
-	DrawArc(0.23*length, 0, 180);
-	DrawLine(0.11*length, 0);
-	DrawArc(0.12*length, 180, -180);
-	DrawLine(0, 0.11*length);
+	SetPenColor("lock");
+	DrawArc(0.06*length, 90, 360);
 	EndFilledRegion();
+	MovePen(x + length*j + 0.51*length, y - length*i - 0.5*length);
+	SetPenSize(2);
+	DrawLine(0, -0.25*length);
+	SetPenSize(1);
+	/*StartFilledRegion(1);
+	DrawLine(-0.06*length, -0.3*length);
+	DrawLine(0, 0.12*length);
+	DrawLine(-0.06*length, 0.3*length);
+	EndFilledRegion();*/
+	
  } 
