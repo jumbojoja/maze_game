@@ -803,7 +803,7 @@ void drawMenu()
 	if(IsChoosingMap){
 		viewSize = 100; 
 		drawLabel(1,winheight/2,p->name);
-		if (button(GenUIID(0), 6, winheight/13, w, h, "NEXT")){
+		if (button(GenUIID(0), 12, winheight/13, w, h, "NEXT")){
 			p=p->next;
 			int i,j;
 			for(i=0;i<msize;i++){
@@ -812,7 +812,7 @@ void drawMenu()
 				}
 			}
 		}
-		if (button(GenUIID(0), 8, winheight/13, w, h, "FRONT")){
+		if (button(GenUIID(0), 6, winheight/13, w, h, "FRONT")){
 			p=p->front;
 			int i,j;
 			for(i=0;i<msize;i++){
@@ -820,9 +820,6 @@ void drawMenu()
 					maze[i][j]=p->Maze[i][j];
 				}
 			}
-		}
-		if (button(GenUIID(0), 10, winheight/13, w, h, "DELETE")){
-			DeleteMaze(head);
 		}
 		if (button(GenUIID(0), 1, winheight/2 - 1.2*h , w, h, "Play")){
 			IsChoosingMap = FALSE;

@@ -49,18 +49,24 @@ void WriteInstructions(double winwidth, double winheight, double w, double fH)
 void WriteAbout(double winwidth, double winheight, double fH)
 {
 	SetPenColor("Orange");
-	MovePen(1, winheight*0.8);
+	MovePen(winwidth/2-0.5*TextStringWidth("We are a C team from Zhejiang University."), winheight*0.8);
 	DrawTextString("We are a C team from Zhejiang University.");
-	MovePen(1, winheight*0.8-fH);
+	MovePen(winwidth/2-0.5*TextStringWidth("This maze game has cost us over a month to finish."), winheight*0.8-2*fH);
 	DrawTextString("This maze game has cost us over a month to finish.");
-	MovePen(1, winheight*0.8-2*fH);
+	MovePen(winwidth/2-0.5*TextStringWidth("In this procedure, we came across many difficulties..."), winheight*0.8-4*fH);
 	DrawTextString("In this procedure, we came across many difficulties...");
-	MovePen(1, winheight*0.8-3*fH);
+	MovePen(winwidth/2-0.5*TextStringWidth("However, we were having great fun too."), winheight*0.8-6*fH);
 	DrawTextString("However, we were having great fun too.");
-	MovePen(1, winheight*0.8-4*fH);
+	MovePen(winwidth/2-0.5*TextStringWidth("Our work is small, but it does contain some very interesting functions."), winheight*0.8-8*fH);
 	DrawTextString("Our work is small, but it does contain some very interesting functions.");
-	MovePen(1, winheight*0.8-5*fH);
+	MovePen(winwidth/2-0.5*TextStringWidth("Hope you will like it."), winheight*0.8-10*fH);
 	DrawTextString("Hope you will like it.");
+	MovePen(winwidth/2-0.5*TextStringWidth("Oh, yes. We have designed some plots in the adventure."), winheight*0.8-12*fH);
+	DrawTextString("Oh, yes. We have designed some plots in the adventure.");
+	MovePen(winwidth/2-0.5*TextStringWidth("It's a story about a man saving himself from depression."), winheight*0.8-14*fH);
+	DrawTextString("It's a story about a man saving himself from depression.");
+	MovePen(winwidth/2-0.5*TextStringWidth("Hope you could slow down your pace and enjoy our story."), winheight*0.8-16*fH);
+	DrawTextString("Hope you could slow down your pace and enjoy our story.");
 	MovePen(winwidth/2-0.5*TextStringWidth("Thank you for playing our game."), winheight/13+2*fH);
 	DrawTextString("Thank you for playing our game.");
 }

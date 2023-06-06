@@ -128,6 +128,10 @@ struct EdittedMaze *LoadMazeList( char str[] )
 	p2->next=head;
 	head->front=p2;
 	
+	if(fclose(fp)){
+		exit(-1);
+	}
+	
 	return head;
 }
 
@@ -178,7 +182,12 @@ void DeleteMaze(struct EdittedMaze *head)
 	if((fp=fopen("data\\Maze_List.txt","w"))==NULL){
 		exit(-1);
 	}
-	
+	if(p==p->next){
+		exit(-1);
+	}
+	if(p==head){
+		head=head->next;
+	}
 	p1=p->front;
 	p->next->front=p1;
 	p1->next=p->next;
@@ -206,5 +215,8 @@ void DeleteMaze(struct EdittedMaze *head)
     	}
     	fprintf(fp,"\n");
     }
+    if(fclose(fp)){
+		exit(-1);
+	}
 	
 }
