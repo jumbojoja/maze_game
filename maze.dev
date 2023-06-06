@@ -4,7 +4,7 @@ Name=maze
 Type=0
 Ver=2
 ObjFiles=
-Includes=./libgraphics;./simpleGUI;./somecode;D:\zju\C\м╪пн©Б\libgraphics
+Includes=./libgraphics;./simpleGUI;./somecode;D:\zju\C\м╪пн©Б\libgraphics;"D:\C files\git init\maze_game\code"
 Libs=
 PrivateResource=
 ResourceIncludes=
@@ -35,10 +35,14 @@ UnitCount=28
 CompilerSet=1
 CompilerSettings=0000000000000000001000000
 <<<<<<< HEAD
+UnitCount=26
+=======
+<<<<<<< HEAD
 UnitCount=24
 =======
-UnitCount=27
+UnitCount=28
 >>>>>>> c1557b7354f4818606fa4690ab8eba669f54d996
+>>>>>>> af6a85dcb4db58240083221dbcff0de0baca58c5
 >>>>>>> 095111c815419aa359f4b7d45d2bff7f0cf7c2ab
 
 [VersionInfo]
@@ -61,16 +65,6 @@ AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit1]
-FileName=main.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit2]
 FileName=libgraphics\boolean.h
 CompileCpp=0
 Folder=lib
@@ -80,7 +74,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit3]
+[Unit2]
 FileName=libgraphics\exceptio.c
 CompileCpp=0
 Folder=lib
@@ -90,8 +84,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit4]
+[Unit3]
 FileName=libgraphics\exception.h
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit4]
+FileName=libgraphics\extgraph.h
 Folder=lib
 Compile=1
 Link=1
@@ -101,16 +105,6 @@ BuildCmd=
 CompileCpp=0
 
 [Unit5]
-FileName=libgraphics\extgraph.h
-CompileCpp=0
-Folder=lib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit6]
 FileName=libgraphics\gcalloc.h
 CompileCpp=0
 Folder=lib
@@ -120,7 +114,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit7]
+[Unit6]
 FileName=libgraphics\genlib.c
 CompileCpp=0
 Folder=lib
@@ -130,7 +124,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit8]
+[Unit7]
 FileName=libgraphics\genlib.h
 CompileCpp=0
 Folder=lib
@@ -140,7 +134,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit9]
+[Unit8]
 FileName=libgraphics\graphics.c
 CompileCpp=0
 Folder=lib
@@ -150,8 +144,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit10]
+[Unit9]
 FileName=libgraphics\graphics.h
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit10]
+FileName=libgraphics\linkedlist.c
 Folder=lib
 Compile=1
 Link=1
@@ -161,16 +165,6 @@ BuildCmd=
 CompileCpp=0
 
 [Unit11]
-FileName=libgraphics\linkedlist.c
-CompileCpp=0
-Folder=lib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit12]
 FileName=libgraphics\linkedlist.h
 CompileCpp=0
 Folder=lib
@@ -180,8 +174,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit13]
+[Unit12]
 FileName=libgraphics\random.c
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit13]
+FileName=libgraphics\random.h
 Folder=lib
 Compile=1
 Link=1
@@ -191,16 +195,6 @@ BuildCmd=
 CompileCpp=0
 
 [Unit14]
-FileName=libgraphics\random.h
-CompileCpp=0
-Folder=lib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit15]
 FileName=libgraphics\simpio.c
 CompileCpp=0
 Folder=lib
@@ -210,8 +204,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit16]
+[Unit15]
 FileName=libgraphics\simpio.h
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit16]
+FileName=libgraphics\strlib.c
 Folder=lib
 Compile=1
 Link=1
@@ -221,16 +225,6 @@ BuildCmd=
 CompileCpp=0
 
 [Unit17]
-FileName=libgraphics\strlib.c
-CompileCpp=0
-Folder=lib
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit18]
 FileName=libgraphics\strlib.h
 CompileCpp=0
 Folder=lib
@@ -240,8 +234,18 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit19]
+[Unit18]
 FileName=simpleGUI\imgui.c
+CompileCpp=0
+Folder=lib
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit19]
+FileName=simpleGUI\imgui.h
 Folder=lib
 Compile=1
 Link=1
@@ -251,9 +255,9 @@ BuildCmd=
 CompileCpp=0
 
 [Unit20]
-FileName=simpleGUI\imgui.h
+FileName=code\adventure.c
 CompileCpp=0
-Folder=lib
+Folder=adventure
 Compile=1
 Link=1
 Priority=1000
@@ -261,7 +265,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=file_store.c
+FileName=code\file_store.c
 CompileCpp=0
 Folder=file_store
 Compile=1
@@ -271,7 +275,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit22]
-FileName=file_store.h
+FileName=code\file_store.h
 Folder=file_store
 Compile=1
 Link=1
@@ -280,29 +284,17 @@ OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=0
 
-[Unit23]
-<<<<<<< HEAD
-FileName=drawn.c
-CompileCpp=0
-Folder=
-=======
-FileName=adventure.c
-CompileCpp=0
-Folder=adventure
->>>>>>> c1557b7354f4818606fa4690ab8eba669f54d996
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit24]
+<<<<<<< HEAD
+FileName=code\paperwork.h
+=======
 <<<<<<< HEAD
 FileName=drawn.h
 CompileCpp=0
 Folder=
 =======
-FileName=paperwork.c
+FileName=code\paperwork.h
+>>>>>>> af6a85dcb4db58240083221dbcff0de0baca58c5
 CompileCpp=0
 Folder=paperwork
 >>>>>>> c1557b7354f4818606fa4690ab8eba669f54d996
@@ -313,7 +305,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=paperwork.h
+FileName=code\paperwork.c
 Folder=paperwork
 Compile=1
 Link=1
@@ -321,9 +313,15 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=0
+<<<<<<< HEAD
+=======
 
-[Unit27]
-FileName=drawn.h
+[Unit26]
+<<<<<<< HEAD
+FileName=code\adventure.h
+=======
+FileName=code\drawn.c
+>>>>>>> af6a85dcb4db58240083221dbcff0de0baca58c5
 CompileCpp=0
 Folder=drawn
 Compile=1
@@ -331,6 +329,30 @@ Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+>>>>>>> f863959629507b612382adf506d9a66bf381b8ec
+
+[Unit27]
+FileName=code\main.c
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+<<<<<<< HEAD
+=======
+
+[Unit28]
+FileName=code\main.c
+Folder=maze
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+CompileCpp=0
+>>>>>>> f863959629507b612382adf506d9a66bf381b8ec
 
 [Unit30]
 FileName=file_store.h
@@ -343,7 +365,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit28]
-FileName=..\drawn.h
+FileName=code\drawn.c
 CompileCpp=0
 Folder=drawn
 Compile=1
@@ -363,9 +385,19 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit26]
-FileName=drawn.c
+FileName=code\drawn.h
 CompileCpp=0
 Folder=drawn
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit23]
+FileName=code\adventure.h
+CompileCpp=0
+Folder=adventure
 Compile=1
 Link=1
 Priority=1000

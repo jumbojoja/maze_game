@@ -4,8 +4,8 @@
 CPP      = g++.exe -D__DEBUG__
 CC       = gcc.exe -D__DEBUG__
 WINDRES  = windres.exe
-OBJ      = main.o libgraphics/exceptio.o libgraphics/genlib.o libgraphics/graphics.o libgraphics/linkedlist.o libgraphics/random.o libgraphics/simpio.o libgraphics/strlib.o simpleGUI/imgui.o file_store.o adventure.o paperwork.o drawn.o
-LINKOBJ  = main.o libgraphics/exceptio.o libgraphics/genlib.o libgraphics/graphics.o libgraphics/linkedlist.o libgraphics/random.o libgraphics/simpio.o libgraphics/strlib.o simpleGUI/imgui.o file_store.o adventure.o paperwork.o drawn.o
+OBJ      = libgraphics/exceptio.o libgraphics/genlib.o libgraphics/graphics.o libgraphics/linkedlist.o libgraphics/random.o libgraphics/simpio.o libgraphics/strlib.o simpleGUI/imgui.o code/adventure.o code/file_store.o code/paperwork.o code/main.o code/drawn.o
+LINKOBJ  = libgraphics/exceptio.o libgraphics/genlib.o libgraphics/graphics.o libgraphics/linkedlist.o libgraphics/random.o libgraphics/simpio.o libgraphics/strlib.o simpleGUI/imgui.o code/adventure.o code/file_store.o code/paperwork.o code/main.o code/drawn.o
 LIBS     = -L"D:/Dev C++/Dev-Cpp/MinGW64/lib" -L"D:/Dev C++/Dev-Cpp/MinGW64/x86_64-w64-mingw32/lib" -static-libgcc -mwindows -g3
 INCS     = -I"D:/Dev C++/Dev-Cpp/MinGW64/include" -I"D:/Dev C++/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev C++/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"./libgraphics" -I"./simpleGUI" -I"D:/zju/C/м╪пн©Б/libgraphics"
 CXXINCS  = -I"D:/Dev C++/Dev-Cpp/MinGW64/include" -I"D:/Dev C++/Dev-Cpp/MinGW64/x86_64-w64-mingw32/include" -I"D:/Dev C++/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include" -I"D:/Dev C++/Dev-Cpp/MinGW64/lib/gcc/x86_64-w64-mingw32/4.9.2/include/c++" -I"./libgraphics" -I"./simpleGUI" -I"D:/zju/C/м╪пн©Б/libgraphics"
@@ -23,9 +23,6 @@ clean: clean-custom
 
 $(BIN): $(OBJ)
 	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
-
-main.o: main.c
-	$(CC) -c main.c -o main.o $(CFLAGS)
 
 libgraphics/exceptio.o: libgraphics/exceptio.c
 	$(CC) -c libgraphics/exceptio.c -o libgraphics/exceptio.o $(CFLAGS)
@@ -51,14 +48,17 @@ libgraphics/strlib.o: libgraphics/strlib.c
 simpleGUI/imgui.o: simpleGUI/imgui.c
 	$(CC) -c simpleGUI/imgui.c -o simpleGUI/imgui.o $(CFLAGS)
 
-file_store.o: file_store.c
-	$(CC) -c file_store.c -o file_store.o $(CFLAGS)
+code/adventure.o: code/adventure.c
+	$(CC) -c code/adventure.c -o code/adventure.o $(CFLAGS)
 
-adventure.o: adventure.c
-	$(CC) -c adventure.c -o adventure.o $(CFLAGS)
+code/file_store.o: code/file_store.c
+	$(CC) -c code/file_store.c -o code/file_store.o $(CFLAGS)
 
-paperwork.o: paperwork.c
-	$(CC) -c paperwork.c -o paperwork.o $(CFLAGS)
+code/paperwork.o: code/paperwork.c
+	$(CC) -c code/paperwork.c -o code/paperwork.o $(CFLAGS)
 
-drawn.o: drawn.c
-	$(CC) -c drawn.c -o drawn.o $(CFLAGS)
+code/main.o: code/main.c
+	$(CC) -c code/main.c -o code/main.o $(CFLAGS)
+
+code/drawn.o: code/drawn.c
+	$(CC) -c code/drawn.c -o code/drawn.o $(CFLAGS)
