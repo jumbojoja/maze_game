@@ -64,8 +64,8 @@ int maze[msize][msize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
 						  -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1,-1,
 						  -1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1,-1,
 						  -1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1,-1,
-						  -1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1,-1,
-						  -1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3,-1,
+						  -1, 1, 0, 4, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1,-1,
+						  -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3,-1,
 						  -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,-1,
 						  -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; 
 
@@ -122,7 +122,7 @@ void KeyboardEventProcess(int key, int event)
 				case VK_UP:
 					if(ccx == 0)
 						break;     
-                	if(maze[ccx-1][ccy] == 0 || maze[ccx-1][ccy] == -2 || maze[ccx-1][ccy] == -3 || maze[ccx-1][ccy] == 3)
+                	if(maze[ccx-1][ccy] == 0 || maze[ccx-1][ccy] == -2 || maze[ccx-1][ccy] == -3)
 					{
 						player[ccx][ccy] = 0;
 						ccx -=1;
@@ -133,9 +133,10 @@ void KeyboardEventProcess(int key, int event)
 						haveKey = 1;
 						player[ccx][ccy] = 0;
                 		ccx -= 1;
-						player[ccx][ccy] = 6;	
+						player[ccx][ccy] = 6;
+						maze[ccx][ccy] = 0;
 					}
-					else if(maze[ccx-1][ccy] == 5)
+					else if(maze[ccx-1][ccy] == 3)
 					{
 						if(haveKey)
 						{
@@ -149,7 +150,7 @@ void KeyboardEventProcess(int key, int event)
 			     case VK_DOWN:
 			     	if(ccx == msize-1)
 			     		break;
-			         if(maze[ccx+1][ccy] == 0 || maze[ccx+1][ccy] == -2 || maze[ccx+1][ccy] == -3 || maze[ccx+1][ccy] == 3)  
+			         if(maze[ccx+1][ccy] == 0 || maze[ccx+1][ccy] == -2 || maze[ccx+1][ccy] == -3)  
                 	{
                 		player[ccx][ccy] = 0;
                 		ccx += 1;
@@ -160,9 +161,10 @@ void KeyboardEventProcess(int key, int event)
 						haveKey = 1;
 						player[ccx][ccy] = 0;
                 		ccx += 1;
-						player[ccx][ccy] = 6;	
+						player[ccx][ccy] = 6;
+						maze[ccx][ccy] = 0;	
 					}
-					else if(maze[ccx+1][ccy] == 5)
+					else if(maze[ccx+1][ccy] == 3)
 					{
 						if(haveKey)
 						{
@@ -176,7 +178,7 @@ void KeyboardEventProcess(int key, int event)
 			     case VK_LEFT:
 			     	if(ccy == 0)
 			     		break;
-			         if(maze[ccx][ccy-1] == 0 || maze[ccx][ccy-1] == -2 || maze[ccx][ccy-1] == -3 || maze[ccx][ccy-1] == 3)  
+			         if(maze[ccx][ccy-1] == 0 || maze[ccx][ccy-1] == -2 || maze[ccx][ccy-1] == -3)  
                 	{
                 		player[ccx][ccy] = 0;
                 		ccy -= 1;
@@ -187,9 +189,10 @@ void KeyboardEventProcess(int key, int event)
 						haveKey = 1;
 						player[ccx][ccy] = 0;
                 		ccy -= 1;
-						player[ccx][ccy] = 6;	
+						player[ccx][ccy] = 6;
+						maze[ccx][ccy] = 0;	
 					}
-					else if(maze[ccx][ccy-1] == 5)
+					else if(maze[ccx][ccy-1] == 3)
 					{
 						if(haveKey)
 						{
@@ -203,7 +206,7 @@ void KeyboardEventProcess(int key, int event)
 			     case VK_RIGHT:
 			     	if(ccy == msize-1)
 			     		break;
-			         if(maze[ccx][ccy+1] == 0 || maze[ccx][ccy+1] == -2 || maze[ccx][ccy+1] == -3 || maze[ccx][ccy+1] == 3)  
+			         if(maze[ccx][ccy+1] == 0 || maze[ccx][ccy+1] == -2 || maze[ccx][ccy+1] == -3)  
                 	{
                 		player[ccx][ccy] = 0;
                 		ccy += 1;
@@ -214,9 +217,10 @@ void KeyboardEventProcess(int key, int event)
 						haveKey = 1;
 						player[ccx][ccy] = 0;
                 		ccy += 1;
-						player[ccx][ccy] = 6;	
+						player[ccx][ccy] = 6;
+						maze[ccx][ccy] = 0;	
 					}
-					else if(maze[ccx][ccy+1] == 5)
+					else if(maze[ccx][ccy+1] == 3)
 					{
 						if(haveKey)
 						{
@@ -413,6 +417,16 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					DrawLine(0,length);
 					EndFilledRegion();
 					SetPenColor("Red");
+				}else if (maze[i][j] == 4 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
+					MovePen(x + length*j,y - length*i);
+					StartFilledRegion(1); 
+					SetPenColor("Violet");
+					DrawLine(length,0);
+					DrawLine(0,-1.0*length);
+					DrawLine(-1.0*length,0);
+					DrawLine(0,length);
+					EndFilledRegion();
+					SetPenColor("Red");
 				}
 				if(player[i][j] == 6){
 					drawplayer(x, y, i, j);
@@ -541,6 +555,7 @@ void drawMenu()
 		 	ccx = 2;
 		 	ccy = 2;
 		 	player[ccx][ccy] = 6;
+		 	haveKey = 0;
 		}
 		if( selection==2 ) {	// 退回主菜单 
 			
@@ -619,12 +634,34 @@ void drawMenu()
 		selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListSolve,sizeof(menuListSolve)/sizeof(menuListSolve[0]));
 		if( selection>0 ) selectedLabel = menuListSolve[selection];
 		if ( selection == 1) {
+			int i, j, m, n;
+			for (i = 2; i < msize-1; ++i) {
+				for (j = 2; j < msize-1; ++j) {
+					if (maze[i][j] == 4) {
+						maze[i][j] = 0;
+						m = i;
+						n = j;
+					}
+				}
+			}
 			Solve(ccx,ccy,maze);
+			maze[m][n] = 4;
 			FLAG = 0;
 			ClearSolve = 1;
 		}
 		if ( selection == 2) {
+			int i, j, m, n;
+			for (i = 2; i < msize-1; ++i) {
+				for (j = 2; j < msize-1; ++j) {
+					if (maze[i][j] == 4) {
+						maze[i][j] = 0;
+						m = i;
+						n = j;
+					}
+				}
+			}
 			Solve(ccx,ccy,maze);
+			maze[m][n] = 4;
 			FLAG = 0;
 			ClearSolve = 0;
 		}
@@ -715,6 +752,7 @@ void drawMenu()
 		MovePen(winwidth/2 - TextStringWidth("You win!"), winheight/2);
 		DrawTextString("You win!");
 		ifwin = 0;
+		haveKey = 0;
 		mazehelper(maze,2,2);
 		ccx = 2;
 		ccy = 2;
@@ -939,6 +977,16 @@ void mazehelper(int maze[msize][msize], int x, int y) {
 			break;
 		}
 	}
+	
+	i = 2 + rand() % (msize-4);
+	j = 2 + rand() % (msize-4);
+	while (maze[i][j] != 0) {
+		if (i < msize/2) ++i;
+		else --i;
+		if (j < msize/2) ++j;
+		else --j;
+	} 
+	maze[i][j] = 4;
 }
 
 // 擦除求解路径
