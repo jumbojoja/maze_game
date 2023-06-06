@@ -68,11 +68,9 @@ void WriteAbout(double winwidth, double winheight, double fH)
 void WriteEditManually(double winwidth, double winheight, double fH){
 	SetPenColor("Orange");
 	MovePen(0, winheight*0.8-fH);
-	DrawTextString("Use the left button of your mouse to add walls(Red).");
+	DrawTextString("Use the left button of your mouse to add walls.");
 	MovePen(0, winheight*0.8-2*fH);
 	DrawTextString("Use the right button of your mouse to add keys.");
-	MovePen(0, winheight*0.8-3*fH);
-	DrawTextString("Use the middle button of your mouse to add events.");
 	MovePen(0, winheight*0.8-5*fH);
 	DrawTextString("If you have finished your edit work,");
 	MovePen(0, winheight*0.8-6*fH);

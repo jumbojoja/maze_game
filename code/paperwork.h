@@ -19,5 +19,4 @@ void WriteAdventure6(double winwidth, double winheight, double fH);
 void WriteAdventure7(double winwidth, double winheight, double fH);
 void WriteAdventure8(double winwidth, double winheight, double fH);
 void WriteAdventure9(double winwidth, double winheight, double fH);
-void WriteAdventure10(double winwidth, double winheight, double fH);
 #endif
