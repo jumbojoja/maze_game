@@ -283,6 +283,7 @@ void MouseEventProcess(int x, int y, int button, int event) {
 	display(); // 刷新显示
 }
 
+// 用户的字符事件响应函数
 void CharEventProcess(char ch) {
 	uiGetChar(ch); // GUI字符输入
 	display(); //刷新显示
@@ -326,19 +327,7 @@ void Main() {
     head=LoadMazeList("data\\Maze_List.txt");
     p=head;
     adventure_head=LoadMazeList("data\\Adventure_List.txt");
-    /*InitConsole();
-    for(p=adventure_head;p->number!=adventure_head->front->number;p=p->next){
-    	printf("%d",p->number);
-    	printf("\n");
-    	puts(p->name);
-    	printf("\n");
-    	for(i=0;i<msize;i++){
-    		for(j=0;j<msize;j++){
-    			printf("%d ",p->Maze[i][j]);
-    		}
-    	}
-    	printf("\n");
-    }//输出测试*/
+    
 }
 
 // 绘制迷宫 
