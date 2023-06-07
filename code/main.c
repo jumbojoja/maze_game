@@ -884,8 +884,8 @@ void CreateMaze(int maze[msize][msize], int x, int y) {
 		int dx = x;
 		int dy = y;
  
-		int range = 1 + rand() % 1;
-		while (range>0) {
+		int range = 1;
+		while (range > 0) {
 			dx += direction[i][0];
 			dy += direction[i][1];
  
