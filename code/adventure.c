@@ -1,4 +1,4 @@
-//这一文件是冒险模式的剧情，还未完成 
+/* 这一文件用于冒险模式的具体实现 */
 #include "graphics.h"
 #include "extgraph.h"
 #include "genlib.h"
@@ -20,6 +20,7 @@
 
 #include "imgui.h"
 #include "file_store.h"
+#include "drawn.h"
 #include "paperwork.h"
 #include "adventure.h"
 

@@ -1,4 +1,4 @@
-//这一文件用于存放写文案的函数 
+/* 这一文件用于实现写文案的函数 */
 #include "graphics.h"
 #include "extgraph.h"
 #include "genlib.h"
@@ -20,13 +20,14 @@
 
 #include "imgui.h"
 #include "file_store.h"
+#include "drawn.h"
 #include "paperwork.h"
+#include "adventure.h"
 
 #define msize 20
-#define length 0.25
+#define length 0.45
 
-void WriteInstructions(double winwidth, double winheight, double w, double fH)
-{
+void WriteInstructions(double winwidth, double winheight, double w, double fH) {
 	SetPenColor("Orange");
 	MovePen(winwidth/2+1.8*w, winheight/2);
 	DrawTextString("Use <- ^ v -> to move.");
@@ -46,8 +47,7 @@ void WriteInstructions(double winwidth, double winheight, double w, double fH)
 	DrawTextString("Set view to set your view.");
 } 
 
-void WriteAbout(double winwidth, double winheight, double fH)
-{
+void WriteAbout(double winwidth, double winheight, double fH) {
 	SetPenColor("Orange");
 	MovePen(winwidth/2-0.5*TextStringWidth("We are a C team from Zhejiang University."), winheight*0.8);
 	DrawTextString("We are a C team from Zhejiang University.");
@@ -71,7 +71,7 @@ void WriteAbout(double winwidth, double winheight, double fH)
 	DrawTextString("Thank you for playing our game.");
 }
 
-void WriteEditManually(double winwidth, double winheight, double fH){
+void WriteEditManually(double winwidth, double winheight, double fH) {
 	SetPenColor("Orange");
 	MovePen(0, winheight*0.8-fH);
 	DrawTextString("Use the left button of your mouse to add walls.");
@@ -91,8 +91,7 @@ void WriteEditManually(double winwidth, double winheight, double fH){
 	DrawTextString("The orange cell stands for the finish point.");
 }
 
-void WriteAdventure2(double winwidth, double winheight, double fH)
-{
+void WriteAdventure2(double winwidth, double winheight, double fH) {
 	SetPenColor("Orange");
 	MovePen(winwidth/2-0.5*TextStringWidth("It has been several years since I was diagnosed with depression."), winheight/2 + 6*fH);
 	DrawTextString("It has been several years since I was diagnosed with depression.");
@@ -114,8 +113,7 @@ void WriteAdventure2(double winwidth, double winheight, double fH)
 	
 }
 
-void WriteAdventure3(double winwidth, double winheight, double fH)
-{
+void WriteAdventure3(double winwidth, double winheight, double fH) {
 	SetPenColor("Orange");
 	MovePen(winwidth/2-0.5*TextStringWidth("We are going on. Cells."), winheight/2 + 8*fH);
 	DrawTextString("We are going on. Cells.");
@@ -139,8 +137,7 @@ void WriteAdventure3(double winwidth, double winheight, double fH)
 	
 }
 
-void WriteAdventure4(double winwidth, double winheight, double fH)
-{
+void WriteAdventure4(double winwidth, double winheight, double fH) {
 	SetPenColor("Orange");
 	MovePen(winwidth/2-0.5*TextStringWidth("Forgive me."), winheight/2 + 4*fH);
 	DrawTextString("Forgive me.");
@@ -155,8 +152,7 @@ void WriteAdventure4(double winwidth, double winheight, double fH)
 	DrawTextString("Press any direction key to continue");
 }
 
-void WriteAdventure5(double winwidth, double winheight, double fH)
-{
+void WriteAdventure5(double winwidth, double winheight, double fH) {
 	SetPenColor("Red");
 	MovePen(winwidth/2-0.5*TextStringWidth("A blood black nothingness began to spin."), winheight/2 + 2*fH);
 	DrawTextString("A blood black nothingness began to spin.");
@@ -170,8 +166,7 @@ void WriteAdventure5(double winwidth, double winheight, double fH)
 	DrawTextString("Press any direction key to continue");
 }
 
-void WriteAdventure6(double winwidth, double winheight, double fH)
-{
+void WriteAdventure6(double winwidth, double winheight, double fH) {
 	SetPenColor("Orange");
 	MovePen(winwidth/2-0.5*TextStringWidth("I knew it!"), winheight/2 + 4*fH);
 	DrawTextString("I knew it!");
@@ -188,8 +183,7 @@ void WriteAdventure6(double winwidth, double winheight, double fH)
 	DrawTextString("Press any direction key to continue");
 }
 
-void WriteAdventure7(double winwidth, double winheight, double fH)
-{
+void WriteAdventure7(double winwidth, double winheight, double fH) {
 	SetPenColor("Orange");
 	MovePen(winwidth/2-0.5*TextStringWidth("What's it like to hold your child in your arms? Interlinked."), winheight/2 + 6*fH);
 	DrawTextString("What's it like to hold your child in your arms? Interlinked.");
@@ -213,8 +207,7 @@ void WriteAdventure7(double winwidth, double winheight, double fH)
 	DrawTextString("Press any direction key to continue");
 }
 
-void WriteAdventure8(double winwidth, double winheight, double fH)
-{
+void WriteAdventure8(double winwidth, double winheight, double fH) {
 	SetPenColor("Red");
 	MovePen(winwidth/2-0.5*TextStringWidth("Love is blind."), winheight/2 + 6*fH);
 	DrawTextString("Love is blind.");
@@ -227,8 +220,7 @@ void WriteAdventure8(double winwidth, double winheight, double fH)
 	DrawTextString("Press any direction key to continue");
 }
 
-void WriteAdventure9(double winwidth, double winheight, double fH)
-{
+void WriteAdventure9(double winwidth, double winheight, double fH) {
 	SetPenColor("Orange");
 	MovePen(winwidth/2-0.5*TextStringWidth("What..."), winheight/2 + 6*fH);
 	DrawTextString("What...");

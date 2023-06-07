@@ -313,6 +313,8 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=0
+<<<<<<< HEAD
+=======
 
 [Unit26]
 <<<<<<< HEAD
@@ -327,16 +329,19 @@ Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+>>>>>>> f863959629507b612382adf506d9a66bf381b8ec
 
 [Unit27]
-FileName=code\drawn.h
+FileName=code\main.c
 CompileCpp=0
-Folder=drawn
+Folder=
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+<<<<<<< HEAD
+=======
 
 [Unit28]
 FileName=code\main.c
@@ -347,6 +352,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 CompileCpp=0
+>>>>>>> f863959629507b612382adf506d9a66bf381b8ec
 
 [Unit30]
 FileName=file_store.h
@@ -358,10 +364,30 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit29]
-FileName=file_store.c
+[Unit28]
+FileName=code\drawn.c
 CompileCpp=0
-Folder=
+Folder=drawn
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit29]
+FileName=..\drawn.c
+CompileCpp=0
+Folder=drawn
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit26]
+FileName=code\drawn.h
+CompileCpp=0
+Folder=drawn
 Compile=1
 Link=1
 Priority=1000

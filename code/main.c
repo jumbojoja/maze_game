@@ -1,3 +1,7 @@
+/* 此项目主要内容为实现迷宫游戏
+ * 具体内容包括五个文件夹与一个main.c文件
+ * 最后一次修改 2023.06.07 20：33
+ */ 
 #include "graphics.h"
 #include "extgraph.h"
 #include "genlib.h"
@@ -21,26 +25,28 @@
 #include "file_store.h"
 #include "drawn.h"
 #include "paperwork.h"
+#include "adventure.h"
 
 #define msize 20
-#define length 0.35
-static int Rank = 1;
-static int FLAG = 0;	//迷宫是否有解 
-static double winwidth, winheight;   // 窗口尺寸
+#define length 0.45 
 
-//冒险模式判断变量，如果开启表示正在冒险模式 
+static int FLAG = 0;	/* 用于判断迷宫是否有解 */
+
+static double winwidth, winheight;   /* 窗口尺寸变量 */ 
+
+/*冒险模式判断变量，如果开启表示正在冒险模式 */
 bool IsAdventuring = FALSE; 
 
-//手动编辑判断变量 如果开启表示正在手动编辑 
+/*手动编辑判断变量 如果开启表示正在手动编辑 */
 bool IsEditManually = FALSE;
 
-//地图选择判断变量 如果开启表示正在选择地图 
+/*地图选择判断变量 如果开启表示正在选择地图 */
 bool IsChoosingMap = FALSE;
 
-//迷宫开始画的坐标，可供调用 
+/*迷宫开始画的坐标，可供调用 */
 static double startx,starty;
 
-//编辑迷宫的名字 所用字符串
+/*编辑迷宫的名字 所用字符串 */
 char MazeName[30];
 
 int maze[msize][msize] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,
@@ -72,158 +78,151 @@ struct EdittedMaze *head,*p,*adventure_head;
 
 static int haveKey = 0;
 static int ifwin = 0;
-int viewSize = 3; //这里我把这个视野静态取消了，因为我在剧情里面需要调视野 by LWJ 
+int viewSize = 3; 
 static int ClearSolve = 1;
 
  
-// 清屏函数，provided in libgraphics
+/* 清屏函数，provided in libgraphics */
 void DisplayClear(void);
 
-// 用户的显示函数
+/* 用户的显示函数 */
 void display(void);
 
-// 像素转英寸函数 
+/* 像素转英寸函数 */
 double ScaleXInches(int x);
 double ScaleYInches(int y);
 
-// 判断鼠标是否在迷宫内函数 
+/* 判断鼠标是否在迷宫内函数 */
 bool inBox(double x0, double y0, double x1, double x2, double y1, double y2);
 
-// 迷宫生成 
+/* 迷宫生成 */
 void CreateMaze(int maze[msize][msize], int x, int y); 
 void mazehelper(int maze[msize][msize], int x, int y); 
 
-// 擦除求解路径
+/* 擦除求解路径 */
 void clean(int maze[msize][msize]);
 
-// 自动求解
+/* 自动求解 */
 void Solve(int x, int y, int maze[msize][msize]);
 
-// 用户的键盘事件响应函数
-void KeyboardEventProcess(int key, int event)
-{
-	double x = 0; //fH/8;
+/* 用户的键盘事件响应函数 */
+void KeyboardEventProcess(int key, int event) {
+	double x = 0; 
 	double y = winheight;
 	x = winwidth/15 + 0.3;
 	y = winheight/8*7 - 0.2;
-	uiGetKeyboard(key,event); // GUI获取键盘
+	uiGetKeyboard(key, event); /* GUI获取键盘 */
 	if (ClearSolve == 0) clean(maze);
 	display();
-	switch(event)
-	{
+	switch(event) {
 		case KEY_DOWN:
-			switch(key)
-			{
+			switch(key) {
 				case VK_UP:
 					if(ccx == 0)
 						break;     
-                	if(maze[ccx-1][ccy] == 0 || maze[ccx-1][ccy] == -2 || maze[ccx-1][ccy] == -3)
-					{
+                	if(maze[ccx-1][ccy] == 0 || maze[ccx-1][ccy] == -2 || maze[ccx-1][ccy] == -3) {
 						player[ccx][ccy] = 0;
-						ccx -=1;
+						ccx -= 1;
 						player[ccx][ccy] = 6;
 					}
-					else if(maze[ccx-1][ccy] == 4)
-					{
+					else if(maze[ccx-1][ccy] == 4) {
 						haveKey = 1;
 						player[ccx][ccy] = 0;
                 		ccx -= 1;
 						player[ccx][ccy] = 6;
 						maze[ccx][ccy] = 0;
 					}
-					else if(maze[ccx-1][ccy] == 3)
-					{
-						if(haveKey)
-						{
+					else if(maze[ccx-1][ccy] == 3) {
+						if(haveKey) {
 							player[ccx][ccy] = 0;
                 			ccx -= 1;
 							player[ccx][ccy] = 6;	
 						}
-						
+						else {
+							MovePen(0, 6);
+							DrawTextString("You don't have a key to unlock the lock, go find the key.");
+						}						
 					}
                      break;
 			     case VK_DOWN:
-			     	if(ccx == msize-1)
+			     	if(ccx == msize - 1)
 			     		break;
-			         if(maze[ccx+1][ccy] == 0 || maze[ccx+1][ccy] == -2 || maze[ccx+1][ccy] == -3)  
-                	{
+			         if(maze[ccx+1][ccy] == 0 || maze[ccx+1][ccy] == -2 || maze[ccx+1][ccy] == -3) {
                 		player[ccx][ccy] = 0;
                 		ccx += 1;
 						player[ccx][ccy] = 6;
 					}
-					else if(maze[ccx+1][ccy] == 4)
-					{
+					else if(maze[ccx+1][ccy] == 4) {
 						haveKey = 1;
 						player[ccx][ccy] = 0;
                 		ccx += 1;
 						player[ccx][ccy] = 6;
 						maze[ccx][ccy] = 0;	
 					}
-					else if(maze[ccx+1][ccy] == 3)
-					{
-						if(haveKey)
-						{
+					else if(maze[ccx+1][ccy] == 3) {
+						if(haveKey) {
 							player[ccx][ccy] = 0;
                 			ccx += 1;
 							player[ccx][ccy] = 6;	
 						}
-						
+						else {
+							MovePen(0, 6);
+							DrawTextString("You don't have a key to unlock the lock, go find the key.");
+						}
 					}
                      break;
 			     case VK_LEFT:
 			     	if(ccy == 0)
 			     		break;
-			         if(maze[ccx][ccy-1] == 0 || maze[ccx][ccy-1] == -2 || maze[ccx][ccy-1] == -3)  
-                	{
+			         if(maze[ccx][ccy-1] == 0 || maze[ccx][ccy-1] == -2 || maze[ccx][ccy-1] == -3) {
                 		player[ccx][ccy] = 0;
                 		ccy -= 1;
 						player[ccx][ccy] = 6;
 					}
-					else if(maze[ccx][ccy-1] == 4)
-					{
+					else if(maze[ccx][ccy-1] == 4) {
 						haveKey = 1;
 						player[ccx][ccy] = 0;
                 		ccy -= 1;
 						player[ccx][ccy] = 6;
 						maze[ccx][ccy] = 0;	
 					}
-					else if(maze[ccx][ccy-1] == 3)
-					{
-						if(haveKey)
-						{
+					else if(maze[ccx][ccy-1] == 3) {
+						if(haveKey) {
 							player[ccx][ccy] = 0;
                 			ccy -= 1;
 							player[ccx][ccy] = 6;	
 						}
-						
+						else {
+							MovePen(0, 6);
+							DrawTextString("You don't have a key to unlock the lock, go find the key.");
+						}
 					}
                      break;
 			     case VK_RIGHT:
-			     	if(ccy == msize-1)
+			     	if(ccy == msize - 1)
 			     		break;
-			         if(maze[ccx][ccy+1] == 0 || maze[ccx][ccy+1] == -2 || maze[ccx][ccy+1] == -3)  
-                	{
+			         if(maze[ccx][ccy+1] == 0 || maze[ccx][ccy+1] == -2 || maze[ccx][ccy+1] == -3) {
                 		player[ccx][ccy] = 0;
                 		ccy += 1;
 						player[ccx][ccy] = 6;
 					}
-					else if(maze[ccx][ccy+1] == 4)
-					{
+					else if(maze[ccx][ccy+1] == 4) {
 						haveKey = 1;
 						player[ccx][ccy] = 0;
                 		ccy += 1;
 						player[ccx][ccy] = 6;
 						maze[ccx][ccy] = 0;	
 					}
-					else if(maze[ccx][ccy+1] == 3)
-					{
-						if(haveKey)
-						{
+					else if(maze[ccx][ccy+1] == 3) {
+						if(haveKey) {
 							player[ccx][ccy] = 0;
                 			ccy += 1;
 							player[ccx][ccy] = 6;	
 						}
-						
+						else {
+							MovePen(0, 6);
+							DrawTextString("You don't have a key to unlock the lock, go find the key.");
+						}
 					}
                      break;
                 default: break;
@@ -234,122 +233,101 @@ void KeyboardEventProcess(int key, int event)
 		case KEY_UP:
 			 break;
 	}
-	 // 刷新显示
+	 /* 刷新显示 */
 }
 
-// 用户的鼠标事件响应函数
-void MouseEventProcess(int x, int y, int button, int event)
-{
-	//GUI获取鼠标 
+/* 用户的鼠标事件响应函数 */
+void MouseEventProcess(int x, int y, int button, int event) {
+	/* GUI获取鼠标 */
 	uiGetMouse(x,y,button,event);
 	if(IsEditManually == TRUE&&(inBox(ScaleXInches(x), ScaleYInches(y), (double)((int)startx), (double)((int)startx+msize*length), (double)((int)starty)-msize*length, (double)((int)starty)))){
-		switch(event){
+		switch(event) {
 			case BUTTON_DOWN:
 				switch(button){
-					case LEFT_BUTTON:{
+					case LEFT_BUTTON: {
 						if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]==0){
+							[(int)((ScaleXInches(x)-(int)(startx))/length)] == 0) {
 						maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]=1;
+							[(int)((ScaleXInches(x)-(int)(startx))/length)] = 1;
 						}else if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]==1){
+							[(int)((ScaleXInches(x)-(int)(startx))/length)] == 1) {
 						maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]=0;	
+							[(int)((ScaleXInches(x)-(int)(startx))/length)] = 0;	
 						}
 						break;
 					}
-					case RIGHT_BUTTON:{
+					case RIGHT_BUTTON: {
 						if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]==0){
+							[(int)((ScaleXInches(x)-(int)(startx))/length)] == 0) {
 						maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]=4;
+							[(int)((ScaleXInches(x)-(int)(startx))/length)] = 4;
 						}else if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]==4){
+							[(int)((ScaleXInches(x)-(int)(startx))/length)] == 4) {
 						maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]=0;	
+							[(int)((ScaleXInches(x)-(int)(startx))/length)] = 0;	
 						}
 						break;
 					}
-					/*case MIDDLE_BUTTON:{
-						if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]==0){
-						maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]=3;
-						}else if(maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]==3){
-						maze[(int)(((int)starty-ScaleYInches(y))/length)]
-							[(int)((ScaleXInches(x)-(int)(startx))/length)]=0;	
-						}
-						break;
-					}*/
 					default: break;
-					//红笔是墙 蓝笔是起点 棕笔是终点 
+					/* 鼠标左键是墙 鼠标右键是钥匙 */
 				}
 			
 		}
 	}
-	display(); // 刷新显示
+	display(); /* 刷新显示 */
 }
 
-void CharEventProcess(char ch)
-{
-	uiGetChar(ch); // GUI字符输入
-	display(); //刷新显示
+/* 用户的字符事件响应函数 */
+void CharEventProcess(char ch) {
+	uiGetChar(ch); /* GUI字符输入 */
+	display(); /*刷新显示 */
 }
 
-// 用户主程序入口
-// 仅初始化执行一次
-void Main() 
-{
-	// 新增加载迷宫程序，这是头指针与操作指针
+/* 用户主程序入口 */
+/* 仅初始化执行一次 */
+void Main() {
+	/* 新增加载迷宫程序，这是头指针与操作指针 */
 	head=NULL;
 	p=NULL;
 	int i,j;
 	
-	// 初始化窗口和图形系统
+	/* 初始化窗口和图形系统 */
 	SetWindowTitle("CMAZE!");
 	SetWindowSize(17, 10);
     InitGraphics();
-    //设置所需颜色
+    
+    /* 设置所需颜色 */
 	DefineColor("face", 0.96, 0.96, 0.011);
 	DefineColor("facialContour", 0.83, 0.54, 0.15);
 	DefineColor("mouth", 0.69, 0.42, 0.28);
-	DefineColor("brick", 0.54, 0.54, 0.44);
+	DefineColor("brick", 0.3, 0.66, 0.67);
+	DefineColor("brickCenter", 0.31, 0.52, 0.67);
 	DefineColor("brickJoint", 0.44, 0.41, 0.56);
-	// 获得窗口尺寸
+	DefineColor("keyUpper", 0.86, 0.86, 0.11);
+	DefineColor("keyLower", 0.93, 0.93, 0.04);
+	DefineColor("lock", 0.88, 0.81, 0.09);
+	
+	/* 获得窗口尺寸 */
     winwidth = GetWindowWidth();
     winheight = GetWindowHeight();
     
-	// 注册响应函数
-	registerKeyboardEvent(KeyboardEventProcess);// 键盘
-	registerMouseEvent(MouseEventProcess);      // 鼠标
-	registerCharEvent(CharEventProcess);		// 字符
+	/* 注册响应函数 */
+	registerKeyboardEvent(KeyboardEventProcess);/* 键盘 */
+	registerMouseEvent(MouseEventProcess);      /* 鼠标 */
+	registerCharEvent(CharEventProcess);		/* 字符 */
 	
 	SetPenColor("Red"); 
     SetPenSize(1);
     
-    //加载迷宫 bug已修复 
+    /* 加载迷宫 */
     head=LoadMazeList("data\\Maze_List.txt");
     p=head;
     adventure_head=LoadMazeList("data\\Adventure_List.txt");
-    /*InitConsole();
-    for(p=adventure_head;p->number!=adventure_head->front->number;p=p->next){
-    	printf("%d",p->number);
-    	printf("\n");
-    	puts(p->name);
-    	printf("\n");
-    	for(i=0;i<msize;i++){
-    		for(j=0;j<msize;j++){
-    			printf("%d ",p->Maze[i][j]);
-    		}
-    	}
-    	printf("\n");
-    }//输出测试*/
+    
 }
 
-// 绘制迷宫 
-void drawmaze(int maze[msize][msize], int x, int y) 
-{
+/* 绘制迷宫 */
+void drawmaze(int maze[msize][msize], int x, int y) {
 	int i, j;
 	SetPenColor("Red");
 	for (i = 0; i < msize; i++) {
@@ -364,14 +342,7 @@ void drawmaze(int maze[msize][msize], int x, int y)
 				SetPenColor("Red");
 			}
 				if (maze[i][j] == 1 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
-				drawwall(x, y, i, j);
-				/*MovePen(x + length*j,y - length*i);
-				StartFilledRegion(1); 
-					DrawLine(length,0);
-					DrawLine(0,-1.0*length);
-					DrawLine(-1.0*length,0);
-					DrawLine(0,length);
-					EndFilledRegion(); */	
+				drawwall(x, y, i, j);	
 				}else if (maze[i][j] == 2) {
 					MovePen(x + length*j,y - length*i);
 					StartFilledRegion(1); 
@@ -383,15 +354,7 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					EndFilledRegion();
 					SetPenColor("Red");
 				}else if (maze[i][j] == 3) {
-					MovePen(x + length*j,y - length*i);
-					StartFilledRegion(1); 
-					SetPenColor("Orange");
-					DrawLine(length,0);
-					DrawLine(0,-1.0*length);
-					DrawLine(-1.0*length,0);
-					DrawLine(0,length);
-					EndFilledRegion();
-					SetPenColor("Red");
+					drawlock(x, y, i, j); 
 				}else if (maze[i][j] == -1) {
 					MovePen(x + length*j,y - length*i);
 					StartFilledRegion(1); 
@@ -412,16 +375,8 @@ void drawmaze(int maze[msize][msize], int x, int y)
 					DrawLine(0,length);
 					EndFilledRegion();
 					SetPenColor("Red");
-				}else if (maze[i][j] == 4 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize) {
-					MovePen(x + length*j,y - length*i);
-					StartFilledRegion(1); 
-					SetPenColor("Violet");
-					DrawLine(length,0);
-					DrawLine(0,-1.0*length);
-					DrawLine(-1.0*length,0);
-					DrawLine(0,length);
-					EndFilledRegion();
-					SetPenColor("Red");
+				}else if (maze[i][j] == 4 && abs(i-ccx) <= viewSize && abs(j-ccy)<=viewSize && haveKey == 0) {
+					drawkey(x, y, i, j);
 				}
 				if(player[i][j] == 6){
 					drawplayer(x, y, i, j);
@@ -430,11 +385,10 @@ void drawmaze(int maze[msize][msize], int x, int y)
 	}
 }
 
-// 菜单
-void drawMenu()
-{ 
+/* 菜单 */
+void drawMenu() { 
 	static char * menuListPause[] = {"Pause",  
-		"Restart  | Ctrl-R", // 快捷键必须采用[Ctrl-X]格式，放在字符串的结尾
+		"Restart  | Ctrl-R", /* 快捷键必须采用[Ctrl-X]格式，放在字符串的结尾 */
 		"Exit   | Ctrl-E"};
 	static char * menuListEdit[] = {"Edit",
 		"Clean",
@@ -472,16 +426,16 @@ void drawMenu()
 	static int CurrentLevel = 1;
 	
 
-	double fH = GetFontHeight(); //字体高度
-	double x = 0; //fH/8;
+	double fH = GetFontHeight(); /*字体高度 */
+	double x = 0; 
 	double y = winheight;
-	double h = fH*1.5; // 控件高度
-	double w = TextStringWidth(menuListSolve[0])*2; // 控件宽度
+	double h = fH*1.5; /* 控件高度 */
+	double w = TextStringWidth(menuListSolve[0])*2; /* 控件宽度 */
 	double wlist = TextStringWidth(menuListEdit[3])*1.2;
 	int    selection;
 	
 
-	// 开始按钮 
+	/* 开始按钮 */
 	if (ifStartbutton) {
 		if (button(GenUIID(0), winwidth/2-0.5*w, winheight/2, w, h, "Start")) {
 			ifStartbutton = 0;
@@ -498,12 +452,13 @@ void drawMenu()
 			ifLogo = 0;
 			ifInstr = 0;
 			ifInstrButton = 0;
-			player[ccx][ccy] = 6;//确保按下开始再出现玩家，在编辑模式下不出现玩家 
+			player[ccx][ccy] = 6;
+			mazehelper(maze,2,2);/*确保按下开始再出现玩家，在编辑模式下不出现玩家 */
 
 		}
 	}
 	
-	//画logo
+	/* 画logo */
 	if (ifLogo) {
 		SetPenColor("Red");
 		MovePen(winwidth/2-w*3, winheight/2+h*7);
@@ -518,7 +473,7 @@ void drawMenu()
 		DrawTextString("`Y8bod8P'  o888o  o888o  o888o  `Y888""8o  d8888888P    `Y8bod8P'  ");
 	} 
 	
-	// 操作提示
+	/* 操作提示 */
 	if (ifInstr) {
 		WriteInstructions(winwidth,winheight,w,fH); 
 		if (ifInstrButton) {
@@ -529,18 +484,18 @@ void drawMenu()
 		}
 	}
 	
-	// 退出按钮 
+	/* 退出按钮 */
 	if (ifExitbutton) {
 		if (button(GenUIID(0), winwidth/2-0.5*w, winheight/2 - h*1.2, w, h, "Exit")) {
 			exit(-1);
 		}
 	}
 	
-	// Pause 菜单
+	/* Pause 菜单 */
 	if (ifListPause) {
 		selection = menuList(GenUIID(0), x, y-h, w, wlist, h, menuListPause, sizeof(menuListPause)/sizeof(menuListPause[0]));
-		if( selection>0 ) selectedLabel = menuListPause[selection];
-		if( selection==1) {
+		if(selection > 0) selectedLabel = menuListPause[selection];
+		if(selection == 1) {
 			int i, j;
 			clean(maze);
 			for (i = 0; i < msize; ++i) {
@@ -553,8 +508,7 @@ void drawMenu()
 		 	player[ccx][ccy] = 6;
 		 	haveKey = 0;
 		}
-		if( selection==2 ) {	// 退回主菜单 
-			
+		if(selection == 2) {	/* 退回主菜单 */
 			ifStartbutton = 1;
 			ifExitbutton = 1;
 			ifAdventureButton = 1;
@@ -569,68 +523,80 @@ void drawMenu()
 			IsChoosingMap = FALSE;
 			IsAdventuring = FALSE;
 			
+			int i, j;
+			clean(maze);
+			for (i = 0; i < msize; ++i) {
+		 		for (j = 0; j < msize; ++j) {
+		 			player[i][j] = 0;
+			 	}
+		 	}
+		 	ccx = 2;
+		 	ccy = 2;
+		 	player[ccx][ccy] = 6;
+		 	haveKey = 0;
+			
 		}
 	}
 		
 	
-	// Edit 菜单
+	/* Edit 菜单 */
 	if (ifListEdit) {
 		selection = menuList(GenUIID(0),x+w,  y-h, w, wlist,h, menuListEdit,sizeof(menuListEdit)/sizeof(menuListEdit[0]));
-		if( selection>0 ) selectedLabel = menuListEdit[selection];
-		if( selection==3 ){
+		if (selection > 0) selectedLabel = menuListEdit[selection];
+		if (selection == 3) {
 			IsEditManually = TRUE;
 			IsAdventuring = FALSE;
 			IsChoosingMap = FALSE;
 			player[ccx][ccy] = 0;
-			if(IsEditManually){
+			if (IsEditManually) {
 				viewSize = 100;
 				ifdrawmaze = 1; 
 				int i, j;
-				for(i=0;i<msize;i++){
-					for(j=0;j<msize;j++){
-						maze[i][j]=0;
+				for(i = 0; i < msize; ++i){
+					for(j = 0; j < msize; ++j){
+						maze[i][j] = 0;
 					}
 				}
-				for (i = 0; i < msize; i++){
+				for (i = 0; i < msize; ++i){
 					maze[i][0] = -1;
 					maze[0][i] = -1;
 					maze[i][msize - 1] = -1;
 					maze[msize - 1][i] = -1;
 				}
-				maze[2][1]=2;
-				maze[msize-3][msize-2]=3;
+				maze[2][1] = 2;
+				maze[msize-3][msize-2] = 3;
 			}
 		}
-		if( selection==2){
+		if (selection == 2) {
 			mazehelper(maze,2,2);
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE;
 		}
-		if ( selection==1){
+		if (selection == 1) {
 			clean(maze);
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE;
 			ClearSolve = 1;
 		}
-		if( selection == 4){
+		if (selection == 4) {
 			int i,j;
 			IsChoosingMap = TRUE;
 			IsEditManually = FALSE;
 			IsAdventuring = FALSE;
 			p = head;
-			for(i=0;i<msize;i++){
-				for(j=0;j<msize;j++){
-					maze[i][j]=p->Maze[i][j];
+			for(i = 0; i < msize; ++i){
+				for(j = 0; j < msize; ++j){
+					maze[i][j] = p->Maze[i][j];
 				}
 			}
 		}
 	}
 	
-	// Solve 菜单
+	/* Solve 菜单 */
 	if (ifListSolve) {
 		selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListSolve,sizeof(menuListSolve)/sizeof(menuListSolve[0]));
-		if( selection>0 ) selectedLabel = menuListSolve[selection];
-		if ( selection == 1) {
+		if (selection > 0) selectedLabel = menuListSolve[selection];
+		if (selection == 1) {
 			int i, j, m, n;
 			for (i = 2; i < msize-1; ++i) {
 				for (j = 2; j < msize-1; ++j) {
@@ -646,7 +612,7 @@ void drawMenu()
 			FLAG = 0;
 			ClearSolve = 1;
 		}
-		if ( selection == 2) {
+		if (selection == 2) {
 			int i, j, m, n;
 			for (i = 2; i < msize-1; ++i) {
 				for (j = 2; j < msize-1; ++j) {
@@ -664,11 +630,11 @@ void drawMenu()
 		}
 	}
 		
-	// Help 菜单
+	/* Help 菜单 */
 	if (ifListHelp) {
 		selection = menuList(GenUIID(0),winwidth/2-0.5*w,winheight/2 - h*1.2*2, w, wlist, h, menuListHelp,sizeof(menuListHelp)/sizeof(menuListHelp[0]));
-		if( selection>0 ) selectedLabel = menuListHelp[selection];
-		if( selection == 1) {
+		if ( selection > 0) selectedLabel = menuListHelp[selection];
+		if ( selection == 1) {
 			ifInstr = 1;
 			ifInstrButton = 1;
 		}
@@ -692,68 +658,65 @@ void drawMenu()
 		}
 	}
 	
-	//View 菜单
+	/* View 菜单 */
 	if (ifListView) {
 		selection = menuList(GenUIID(0),x+3*w,y-h, w*1.2, wlist/2, h, menuListView,sizeof(menuListView)/sizeof(menuListView[0]));
-		if( selection>0 ) selectedLabel = menuListView[selection];
-		if( selection == 1)
+		if (selection > 0) selectedLabel = menuListView[selection];
+		if (selection == 1)
 			viewSize = 2;
-		if( selection == 2)
+		if (selection == 2)
 			viewSize = 1;
-		if( selection == 3)
+		if (selection == 3)
 			viewSize = 0;
-		if( selection == 4)
+		if (selection == 4)
 			viewSize = 100;
 	}
 	
-	//绘制迷宫 
+	/* 绘制迷宫 */
 	if (ifdrawmaze) {
 		x = winwidth/13;
-		y = winheight/12*11;
+		y = winheight;
 		drawmaze(maze,x+5*w,y);
 		startx=x+5*w;
 		starty=y;
 	}
 
-	
-	if(IsEditManually){
-		if (button(GenUIID(0), 6, winheight/13, w, h, "Save")){
+	/* 手动编辑 */
+	if (IsEditManually) {
+		if (button(GenUIID(0), 6, winheight/15, w, h, "Save")){
 			IsEditManually = FALSE;
 			StoreMaze();
 			InsertMaze(head);
 			int i,j; 
-			for(i=0;i<30;i++){
+			for(i = 0; i < 30; ++i) {
 				MazeName[i] = '\0';
 			}
-			/*InitConsole();
-    		for(p=head;p->number!=head->front->number;p=p->next){
-    			printf("%d",p->number);
-    			printf("\n");
-    			puts(p->name);
-    			printf("\n");
-    			for(i=0;i<msize;i++){
-    				for(j=0;j<msize;j++){
-    					printf("%d ",p->Maze[i][j]);
-    				}
-    			}
-    			printf("\n");
-			}//输出测试*/
-		}//保存后清零名称数组 
+		}/* 保存后清零名称数组 */
 	}
 
 	
-	//判断是否到达终点
-	if(ifwin&&!IsAdventuring){
+	/* 判断是否到达终点 */
+	if (ifwin&&!IsAdventuring) {
 		int i, j; 
 		DisplayClear();
-		MovePen(winwidth/2 - TextStringWidth("You win!"), winheight/2);
-		DrawTextString("You win!");
+		MovePen(winwidth/2-w*3, winheight/2+h*7);
+		DrawTextString("888      888           88888888                   &&&            &&&               &&&           &&&          &&&           &&           &&88          &&");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-fH);
+		DrawTextString("  &&&  &&&          888        888                 &&&            &&&               &&&        &&  &&        &&&            ..             88  88        88");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-2*fH);
+		DrawTextString("    &&&&&          888            888                &&&            &&&               &&&     &&      &&     &&&             88            88    88      88");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-3*fH);
+		DrawTextString("      &&&             888            888               &&&            &&&                &&&  &&          &&  &&&              88            88      88    88");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-4*fH);
+		DrawTextString("      &&&               888        888                   &&&&    &&&&                    &&&&              &&&&                88            88        88  88");
+		MovePen(winwidth/2-w*3, winheight/2+h*7-5*fH);
+		DrawTextString("      &&&                 88888888                       &&&&&&&&                        &&                  &&                   88            88          8888");
 		ifwin = 0;
 		haveKey = 0;
 		mazehelper(maze,2,2);
 		ccx = 2;
 		ccy = 2;
-		//更新player
+		/*更新player */
 		 for (i = 0; i < msize; ++i) {
 		 	for (j = 0; j < msize; ++j) {
 		 		player[i][j] = 0;
@@ -761,16 +724,17 @@ void drawMenu()
 		 }
 		 player[ccx][ccy] = 6;
 
-	}else if(ifwin&&IsAdventuring){
+	} else if(ifwin&&IsAdventuring) {
 		int i, j; 
 		DisplayClear();
-		if(p==adventure_head->front){
+		if (p == adventure_head->front) {
 			MovePen(winwidth/2 - 0.5*TextStringWidth("Thank you for playing our game!"), winheight/2+2*fH);
 			DrawTextString("Thank you for playing our game!");
 			MovePen(winwidth/2 - 0.5*TextStringWidth("Now it's time to start your own adventure."), winheight/2);
 			DrawTextString("Now it's time to start your own adventure.");
 			CurrentLevel = 1;
-		}else{
+		} else {
+			haveKey = 0; 
 			CurrentLevel++;
 			JudgeLevel(winwidth, winheight, fH, CurrentLevel);
 		}
@@ -783,7 +747,7 @@ void drawMenu()
 		 }
 		ccx = 2;
 		ccy = 2;
-		//更新player
+		/* 更新player */
 		 for (i = 0; i < msize; ++i) {
 		 	for (j = 0; j < msize; ++j) {
 		 		player[i][j] = 0;
@@ -793,26 +757,26 @@ void drawMenu()
 	}
 	 
 	
-	if(IsEditManually){
+	if (IsEditManually){
 		WriteEditManually(winwidth,winheight,fH);
 		SetPenColor("Brown"); 
-		drawLabel(8, winheight/13, "迷宫名称");
-		if( textbox(GenUIID(0), 8+TextStringWidth("迷宫名称"), winheight/13, 3*w, h, MazeName, sizeof(MazeName)) );
-	}//新增迷宫名称文本框
+		drawLabel(8, winheight/14, "迷宫名称");
+		if( textbox(GenUIID(0), 8+TextStringWidth("迷宫名称"), winheight/15, 3*w, h, MazeName, sizeof(MazeName)) );
+	}/* 新增迷宫名称文本框 */
 	
-	if(IsChoosingMap){
+	if (IsChoosingMap){
 		viewSize = 100; 
 		drawLabel(1,winheight/2,p->name);
-		if (button(GenUIID(0), 12, winheight/13, w, h, "NEXT")){
-			p=p->next;
+		if (button(GenUIID(0), 13, winheight/15, w, h, "NEXT")){
+			p = p->next;
 			int i,j;
-			for(i=0;i<msize;i++){
-				for(j=0;j<msize;j++){
-					maze[i][j]=p->Maze[i][j];
+			for (i = 0; i < msize; ++i){
+				for (j = 0; j < msize; ++j){
+					maze[i][j] = p->Maze[i][j];
 				}
 			}
 		}
-		if (button(GenUIID(0), 6, winheight/13, w, h, "FRONT")){
+		if (button(GenUIID(0), 6, winheight/15, w, h, "FRONT")){
 			p=p->front;
 			int i,j;
 			for(i=0;i<msize;i++){
@@ -827,13 +791,13 @@ void drawMenu()
 		}
 	}
 	
-	//冒险模式按钮 
-	if(ifAdventureButton){
+	/* 冒险模式按钮 */
+	if (ifAdventureButton) {
 		if (button(GenUIID(0), winwidth/2-w, winheight/2 + h*1.2, 2*w, h, "ADVENTURE")){
 			int i,j;
 			ccx = 2;
 			ccy = 2;
-			//更新player
+			/* 更新player */
 		 	for (i = 0; i < msize; ++i) {
 		 		for (j = 0; j < msize; ++j) {
 		 			player[i][j] = 0;
@@ -856,13 +820,13 @@ void drawMenu()
 			ifLogo = 0;
 			ifInstr = 0;
 			ifInstrButton = 0;
-			CurrentLevel = 1;//一系列的按钮和状态量操作
+			CurrentLevel = 1;/* 一系列的按钮和状态量操作 */
 			
 			StartAdventure(); 
 		}
 	}
 	
-	if(IsDisplayAbout){
+	if (IsDisplayAbout) {
 		WriteAbout(winwidth,winheight,fH);
 		if (button(GenUIID(0), winwidth/2-0.5*w, winheight/13, w, h, "Close")){
 			IsDisplayAbout = 0;
@@ -885,22 +849,21 @@ void drawMenu()
 	}
 }
 
-
-void display()
-{
-	// 清屏
+/* 显示函数 */
+void display() {
+	/* 清屏 */
 	DisplayClear();
 
-	// 绘制和处理菜单
+	/* 绘制和处理菜单 */
 	drawMenu();
 }
 
-bool inBox(double x, double y, double x1, double x2, double y1, double y2)
-{
+/* 判断鼠标是否在迷宫内函数 */
+bool inBox(double x, double y, double x1, double x2, double y1, double y2) {
 	return (x >= x1 && x <= x2 && y >= y1 && y <= y2);
 }
 
-// 迷宫生成 
+/* 迷宫生成 */
 void CreateMaze(int maze[msize][msize], int x, int y) {
 	maze[x][y] = 0;
  	int i, j, k;
@@ -920,8 +883,8 @@ void CreateMaze(int maze[msize][msize], int x, int y) {
 		int dx = x;
 		int dy = y;
  
-		int range = 1 + (Rank == 0 ? 0 : rand() % Rank);
-		while (range>0) {
+		int range = 1;
+		while (range > 0) {
 			dx += direction[i][0];
 			dy += direction[i][1];
  
@@ -952,8 +915,9 @@ void CreateMaze(int maze[msize][msize], int x, int y) {
 	}
 }
 
+/* 迷宫生成辅助函数 */
 void mazehelper(int maze[msize][msize], int x, int y) {
-	//初始化 
+	/* 初始化 */
 	int i, j;
 	for (i = 0; i < msize; ++i) {
 		for (j = 0; j < msize; ++j) {
@@ -969,10 +933,10 @@ void mazehelper(int maze[msize][msize], int x, int y) {
 		maze[msize - 1][i] = 0;
 	}
  
-	//创造迷宫，（2，2）为起点
+	/* 创造迷宫，（2，2）为起点 */
 	CreateMaze(maze, 2, 2);
 	
-	//收尾工作
+	/* 收尾工作 */
 	for (i = 0; i < msize; i++){
 		maze[i][0] = -1;
 		maze[0][i] = -1;
@@ -1000,7 +964,7 @@ void mazehelper(int maze[msize][msize], int x, int y) {
 	maze[i][j] = 4;
 }
 
-// 擦除求解路径
+/* 擦除求解路径 */
 void clean(int maze[msize][msize]) {
 	int i, j;
 	for (i = 0; i < msize; ++i) {
@@ -1010,7 +974,7 @@ void clean(int maze[msize][msize]) {
 	}
 } 
 
-// 自动求解
+/* 自动求解 */
 void Solve(int x, int y, int maze[msize][msize]) {
 	int direction[4][2] = { {0,1},  {1,0}, {0,-1}, {-1,0} };
 	int i, j, flag = 0;

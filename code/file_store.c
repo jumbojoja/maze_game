@@ -1,4 +1,4 @@
-//这一文件用于实现迷宫建立文件保存 
+/* 这一文件用于实现迷宫建立文件保存 */
 #include "graphics.h"
 #include "extgraph.h"
 #include "genlib.h"
@@ -19,9 +19,9 @@
 
 #include "imgui.h"
 #include "file_store.h"
+#include "drawn.h"
 #include "paperwork.h"
 #include "adventure.h"
-//必要头文件包含
 
 #define msize 20
 
@@ -84,7 +84,7 @@ struct EdittedMaze *LoadMazeList( char str[] )
 	while(!feof(fp)){
 		p1=(struct EdittedMaze*)malloc(sizeof(struct EdittedMaze));
 		
-		ch=fgetc(fp);//读掉换行符
+		ch=fgetc(fp);
 		if(ch == '\0'||ch == -1){
 			continue;
 		}
@@ -93,26 +93,20 @@ struct EdittedMaze *LoadMazeList( char str[] )
 			if(ch == '\0'||ch == -1){
 				continue;
 			}
-		}//这个是读链表的补丁，千万别删！！！ 
+		}
 		 
 		p1->number=MazeNumber;
-		MazeNumber++;//给迷宫编号 
+		MazeNumber++;/* 给迷宫编号 */
 		
 		fgets(p1->name,30,fp);
-		/*strcpy(temp,p1->name);
-		for(i=0;temp[i]!='\0'&&temp[i]>=0;i++){
-			p1->name[i]=temp[i];
-		}
-		p1->name[i]='\0';
-		//读名字 */
 		
 		for(i=0;i<msize;i++){
 			for(j=0;j<msize;j++){
 				fscanf(fp,"%d",&p1->Maze[i][j]);
 			}
-		}//读迷宫主体
+		}/* 读迷宫主体 */
 		
-		fgetc(fp);//读掉末尾换行符 
+		fgetc(fp);/* 读掉末尾换行符 */
 		
 		if(head == NULL){
 			head=p1;
@@ -122,7 +116,7 @@ struct EdittedMaze *LoadMazeList( char str[] )
 			p1->front=p2;
 			p2=p2->next;
 		}
-		flag=1;//这个千万别删！ 
+		flag=1;
 	}
 	
 	p2->next=head;
@@ -134,17 +128,6 @@ struct EdittedMaze *LoadMazeList( char str[] )
 	
 	return head;
 }
-
-/*struct EdittedMaze *CreateMazeList()
-{
-	struct EdittedMaze *head;
-	head=(struct EdittedMaze*)malloc(sizeof(struct EdittedMaze));
-	
-	head->next=NULL; 
-	head->front=NULL;
-	
-	return head;
-}*/
 
 void InsertMaze(struct EdittedMaze *head)
 {
@@ -195,7 +178,7 @@ void DeleteMaze(struct EdittedMaze *head)
 	p->front=NULL;
 	p->next=NULL;
 	free(p);
-	p=p1->next;//游戏中的链表操作
+	p=p1->next;/* 游戏中的链表操作 */
 	
 	for(p2=head;p2->number!=head->front->number;p2=p2->next){
     	fprintf(fp,"\n");

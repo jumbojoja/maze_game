@@ -1,4 +1,4 @@
-
+/* ÕâÒ»ÎÄ¼þÓÃÓÚ»­»­µÄ¾ßÌåÊµÏÖ */
 #include "graphics.h"
 #include "extgraph.h"
 #include "genlib.h"
@@ -17,14 +17,18 @@
 #include <winuser.h>
 
 #include "imgui.h"
+#include "file_store.h"
 #include "drawn.h"
-#define length 0.35
+#include "paperwork.h"
+#include "adventure.h"
+
+#define length 0.45
 #define msize 20
 
-//»­Íæ¼Ò
+/* »­Íæ¼Ò */
 void drawplayer(int x, int y, int i, int j)
 {
-	//Ä¬ÈÏ×´Ì¬ÏÂ£¬PenSizeÊÇ1 
+	/* Ä¬ÈÏ×´Ì¬ÏÂ£¬PenSizeÊÇ1 */
 	MovePen(x+length*j + 0.9*length, y - length*i - 0.5*length);
 	StartFilledRegion(1);
 	SetPenColor("face");
@@ -75,7 +79,7 @@ void drawplayer(int x, int y, int i, int j)
 	SetPenSize(1);
 	SetPenColor("Red");
 	
-	//»­ÑÛ¾¦
+	/* »­ÑÛ¾¦ */
 	MovePen(x+length*j + 0.23*length, y - length*i - 0.36*length);
 	SetPenColor("Brown");
 	StartFilledRegion(1);
@@ -90,10 +94,10 @@ void drawplayer(int x, int y, int i, int j)
 	SetPenColor("Red");
 } 
 
-//»æÖÆÇ½
+/* »æÖÆÇ½ */
 void drawwall(int x, int y, int i, int j)
 {
-	//»­×© 
+	/* »­×© */
 	MovePen(x + length*j, y - length*i);
 	StartFilledRegion(1); 
 	SetPenColor("brick");
@@ -125,7 +129,7 @@ void drawwall(int x, int y, int i, int j)
 	EndFilledRegion();
 	MovePen(x + length*j + 1.0*length/3.0, y - length*i - 1.0*length/3.0);
 	StartFilledRegion(1);
-	SetPenColor("Brown"); 
+	SetPenColor("brickCenter"); 
 	DrawLine(1.0*length/3.0,0);
 	DrawLine(0,-1.0*length/3.0);
 	DrawLine(-1.0*length/3.0,0);
@@ -133,7 +137,7 @@ void drawwall(int x, int y, int i, int j)
 	EndFilledRegion();
 	SetPenColor("Red");
 	
-	//»­×©·ì
+	/* »­×©·ì */
 	SetPenColor("brickJoint"); 
 	MovePen(x + length*j, y - length*i);
 	DrawLine(2.0*length/3.0,0);
@@ -163,3 +167,81 @@ void drawwall(int x, int y, int i, int j)
 	SetPenColor("Red");
 }
 
+/* »­Ô¿³× */
+void drawkey(int x, int y, int i, int j)
+{
+	MovePen(x + length*j + 0.66*length, y - length*i - 0.34*length);
+	SetPenColor("keyUpper");
+	StartFilledRegion(1);
+	DrawArc(0.11*length, 225, -180);
+	DrawLine(0.06*length, 0.06*length);
+	DrawArc(0.29*length, 45, 180);
+	DrawLine(0.20*length, 0.20*length);
+	EndFilledRegion();
+	
+	MovePen(x + length*j + 0.5*length, y - length*i - 0.5*length);
+	StartFilledRegion(1);
+	DrawLine(-0.06*length, 0.06*length);
+	DrawLine(-0.32*length, -0.32*length);
+	DrawLine(0, -0.12*length);
+	DrawLine(0.48*length, 0.48*length);
+	EndFilledRegion();
+	
+	SetPenColor("keyLower");
+	MovePen(x + length*j + 0.66*length, y - length*i - 0.34*length);
+	StartFilledRegion(1);
+	DrawArc(0.11*length, 225, 180);
+	DrawLine(0.06*length, 0.06*length);
+	DrawArc(0.29*length, 45, -180);
+	DrawLine(0.20*length, 0.20*length);
+	EndFilledRegion();
+	
+	MovePen(x + length*j + 0.5*length, y - length*i - 0.5*length);
+	StartFilledRegion(1);
+	DrawLine(0.04*length, -0.04*length);
+	DrawLine(-0.16*length, -0.16*length);
+	DrawLine(0, -0.07*length);
+	DrawLine(-0.07*length, 0);
+	DrawLine(0, -0.07*length);
+	DrawLine(-0.15*length, 0);
+	EndFilledRegion();
+	SetPenColor("Red");
+}
+
+/* »­Ëø */
+void drawlock(int x, int y, int i, int j)
+{
+	MovePen(x + length*j, y - length*i);
+	SetPenColor("lock");
+	StartFilledRegion(1);
+	DrawLine(length,0);
+	DrawLine(0,-1.0*length);
+	DrawLine(-1.0*length,0);
+	DrawLine(0,length);
+	EndFilledRegion();
+	
+	MovePen(x + length * j + 0.247*length, y - length*i - 0.447*length);
+	SetPenColor("White");
+	StartFilledRegion(1);
+	DrawLine(0, -0.39*length);
+	DrawLine(0.506*length, 0);
+	DrawLine(0, 0.39*length);
+	DrawLine(-0.506*length, 0);
+	EndFilledRegion();
+	
+	MovePen(x + length*j + 0.73*length, y - length*i - 0.4*length);
+	SetPenSize(3);
+	DrawArc(0.22*length, 0, 180);
+	SetPenSize(1);
+	
+	MovePen(x + length*j + 0.5*length, y - length*i - 0.5*length);
+	StartFilledRegion(1);
+	SetPenColor("lock");
+	DrawArc(0.06*length, 90, 360);
+	EndFilledRegion();
+	MovePen(x + length*j + 0.51*length, y - length*i - 0.5*length);
+	SetPenSize(2);
+	DrawLine(0, -0.25*length);
+	SetPenSize(1);
+	
+ } 
