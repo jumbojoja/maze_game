@@ -597,34 +597,36 @@ void drawMenu() {
 		selection = menuList(GenUIID(0),x+2*w,y-h, w, wlist, h, menuListSolve,sizeof(menuListSolve)/sizeof(menuListSolve[0]));
 		if (selection > 0) selectedLabel = menuListSolve[selection];
 		if (selection == 1) {
-			int i, j, m, n;
+			int i, j, m = 2, n = 2, keysflag = 0;
 			for (i = 2; i < msize-1; ++i) {
 				for (j = 2; j < msize-1; ++j) {
 					if (maze[i][j] == 4) {
 						maze[i][j] = 0;
 						m = i;
 						n = j;
+						keysflag = 1
 					}
 				}
 			}
 			Solve(ccx,ccy,maze);
-			maze[m][n] = 4;
+			if (keysflag) maze[m][n] = 4;
 			FLAG = 0;
 			ClearSolve = 1;
 		}
 		if (selection == 2) {
-			int i, j, m, n;
+			int i, j, m = 2, n = 2, keysflag = 0;
 			for (i = 2; i < msize-1; ++i) {
 				for (j = 2; j < msize-1; ++j) {
 					if (maze[i][j] == 4) {
 						maze[i][j] = 0;
 						m = i;
 						n = j;
+						keysflag = 1;
 					}
 				}
 			}
 			Solve(ccx,ccy,maze);
-			maze[m][n] = 4;
+			if (keysflag) maze[m][n] = 4;
 			FLAG = 0;
 			ClearSolve = 0;
 		}
