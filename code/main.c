@@ -830,6 +830,17 @@ void drawMenu()
 	//冒险模式按钮 
 	if(ifAdventureButton){
 		if (button(GenUIID(0), winwidth/2-w, winheight/2 + h*1.2, 2*w, h, "ADVENTURE")){
+			int i,j;
+			ccx = 2;
+			ccy = 2;
+			//更新player
+		 	for (i = 0; i < msize; ++i) {
+		 		for (j = 0; j < msize; ++j) {
+		 			player[i][j] = 0;
+				 }
+			 }
+			player[ccx][ccy] = 6;
+			 
 			IsAdventuring = TRUE;
 			ifStartbutton = 0;
 			ifExitbutton = 0;
@@ -842,7 +853,10 @@ void drawMenu()
 			ifdrawmaze = 1;
 			IsEditManually = FALSE;
 			IsChoosingMap = FALSE; 
-			ifLogo = 0;//一系列的按钮和状态量操作
+			ifLogo = 0;
+			ifInstr = 0;
+			ifInstrButton = 0;
+			CurrentLevel = 1;//一系列的按钮和状态量操作
 			
 			StartAdventure(); 
 		}
