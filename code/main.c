@@ -24,7 +24,7 @@
 
 #define msize 20
 #define length 0.45 
-static int Rank = 1;
+
 static int FLAG = 0;	//迷宫是否有解 
 static double winwidth, winheight;   // 窗口尺寸
 
@@ -72,7 +72,7 @@ struct EdittedMaze *head,*p,*adventure_head;
 
 static int haveKey = 0;
 static int ifwin = 0;
-int viewSize = 3; // 这里我把这个视野静态取消了，因为我在剧情里面需要调视野 by LWJ 
+int viewSize = 3; 
 static int ClearSolve = 1;
 
  
@@ -672,7 +672,7 @@ void drawMenu() {
 		}
 	}
 	
-	//View 菜单
+	// View 菜单
 	if (ifListView) {
 		selection = menuList(GenUIID(0),x+3*w,y-h, w*1.2, wlist/2, h, menuListView,sizeof(menuListView)/sizeof(menuListView[0]));
 		if (selection > 0) selectedLabel = menuListView[selection];
@@ -686,7 +686,7 @@ void drawMenu() {
 			viewSize = 100;
 	}
 	
-	//绘制迷宫 
+	// 绘制迷宫 
 	if (ifdrawmaze) {
 		x = winwidth/13;
 		y = winheight;
@@ -695,7 +695,7 @@ void drawMenu() {
 		starty=y;
 	}
 
-	
+	// 手动编辑 
 	if (IsEditManually) {
 		if (button(GenUIID(0), 6, winheight/15, w, h, "Save")){
 			IsEditManually = FALSE;
@@ -861,7 +861,7 @@ void drawMenu() {
 	}
 }
 
-
+// 显示函数 
 void display() {
 	// 清屏
 	DisplayClear();
@@ -870,6 +870,7 @@ void display() {
 	drawMenu();
 }
 
+// 判断鼠标是否在迷宫内函数 
 bool inBox(double x, double y, double x1, double x2, double y1, double y2) {
 	return (x >= x1 && x <= x2 && y >= y1 && y <= y2);
 }
@@ -894,7 +895,7 @@ void CreateMaze(int maze[msize][msize], int x, int y) {
 		int dx = x;
 		int dy = y;
  
-		int range = 1 + (Rank == 0 ? 0 : rand() % Rank);
+		int range = 1 + rand() % 1;
 		while (range>0) {
 			dx += direction[i][0];
 			dy += direction[i][1];
@@ -926,6 +927,7 @@ void CreateMaze(int maze[msize][msize], int x, int y) {
 	}
 }
 
+// 迷宫生成辅助函数 
 void mazehelper(int maze[msize][msize], int x, int y) {
 	//初始化 
 	int i, j;

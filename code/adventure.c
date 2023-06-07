@@ -1,4 +1,4 @@
-//这一文件是冒险模式的剧情，还未完成 
+// 冒险模式 
 #include "graphics.h"
 #include "extgraph.h"
 #include "genlib.h"
