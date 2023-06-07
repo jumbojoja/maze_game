@@ -604,7 +604,7 @@ void drawMenu() {
 						maze[i][j] = 0;
 						m = i;
 						n = j;
-						keysflag = 1
+						keysflag = 1; 
 					}
 				}
 			}
